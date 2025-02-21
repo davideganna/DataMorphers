@@ -1,6 +1,6 @@
 import yaml
 import logging
-import src.transformers as transformers
+import src.datamorphers as datamorphers
 
 logger = logging.Logger(__name__)
 
@@ -10,9 +10,10 @@ def get_pipeline_config(yaml_path):
     return config
 
 def run_pipeline(df, config):
-    for func, args in config['pipeline'].items():
+    for cls, args in config['pipeline'].items():
         try:
-            df = getattr(transformers, func)(df, **args)
+            datamorpher = getattr(datamorphers, cls)(**args)
+            df = datamorpher._datamorph(df)
         except Exception as exc:
             logger.error(exc)
     return df 

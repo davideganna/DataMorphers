@@ -1,4 +1,13 @@
 pipeline:
-  add_column:
-    col: C
-    val: 7
+  CreateColumn:
+    column_name: C
+    value: 7
+
+  MultiplyColumns:
+    first_column: A
+    second_column: B
+    output_column: mul
+
+  NormalizeColumn:
+    column_name: A
+    output_column: A_norm
