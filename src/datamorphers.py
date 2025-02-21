@@ -24,6 +24,27 @@ class CreateColumn(DataMorpher):
         return df
     
 
+class DropNA(DataMorpher):
+    def __init__(self, column_name: str):
+        self.column_name = column_name
+
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Drops rows with any NaN values."""
+        df = df.dropna(subset=self.column_name)
+        return df
+    
+
+class FillColumn(DataMorpher):
+    def __init__(self, column_name: str, value: Any):
+        self.column_name = column_name
+        self.value = value
+
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Fills NaN values in the specified column with the provided value."""
+        df[self.column_name] = df[self.column_name].fillna(self.value)
+        return df
+    
+
 class MultiplyColumns(DataMorpher):
     def __init__(self, first_column: str, second_column: str, output_column: str):
         self.first_column = first_column
@@ -46,4 +67,25 @@ class NormalizeColumn(DataMorpher):
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """Normalize a numerical column in the dataframe using Z-score normalization."""
         df[self.output_column] = (df[self.column_name] - df[self.column_name].mean()) / df[self.column_name].std()
+        return df
+    
+
+class RemoveColumn(DataMorpher):
+    def __init__(self, column_name: str):
+        self.column_name = column_name
+
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Removes a specified column from the DataFrame."""
+        df = df.drop(columns=[self.column_name], errors='ignore')
+        return df
+    
+
+class RenameColumn(DataMorpher):
+    def __init__(self, old_column_name: str, new_column_name: str):
+        self.old_column_name = old_column_name
+        self.new_column_name = new_column_name
+
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Renames a column in the dataframe."""
+        df = df.rename(columns={self.old_column_name: self.new_column_name})
         return df

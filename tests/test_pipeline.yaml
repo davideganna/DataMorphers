@@ -3,6 +3,13 @@ pipeline:
     column_name: C
     value: 7
 
+  DropNA:
+    column_name: NA_col
+
+  FillColumn:
+    column_name: B
+    value: 0
+
   MultiplyColumns:
     first_column: A
     second_column: B
@@ -11,3 +18,10 @@ pipeline:
   NormalizeColumn:
     column_name: A
     output_column: A_norm
+
+  RemoveColumn:
+    column_name: ToRemove
+
+  RenameColumn:
+    old_column_name: ToRename
+    new_column_name: RenamedColumn
