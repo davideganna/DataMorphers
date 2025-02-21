@@ -15,5 +15,5 @@ def run_pipeline(df, config):
             df = getattr(transformers, k)(df, **v)
         except Exception as exc:
             logger.error(exc)
-    return df
+    return df 
         
