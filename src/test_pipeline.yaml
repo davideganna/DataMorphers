@@ -1,0 +1,4 @@
+pipeline:
+  add_column:
+    col: C
+    val: 7
