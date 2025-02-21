@@ -10,6 +10,11 @@ pipeline:
     column_name: B
     value: 0
 
+  FilterRows:
+    first_column: A
+    second_column: B
+    logic: le
+
   MultiplyColumns:
     first_column: A
     second_column: B

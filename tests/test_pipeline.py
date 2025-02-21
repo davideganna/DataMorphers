@@ -62,6 +62,25 @@ def test_fill_column():
     assert 0 in df['B']
 
 
+def test_filter_rows():
+    """
+    FilterRows:
+        first_column: A
+        second_column: B
+        logic: le
+    """
+    config = get_pipeline_config(yaml_path=YAML_PATH)
+    
+    df = generate_mock_df()
+    df = run_pipeline(df, config=config)
+
+    res = df.loc[
+        df['A'] <= df['B']
+    ]
+
+    assert df.equals(res)
+
+
 def test_multiply_columns():
     """
     MultiplyColumns:

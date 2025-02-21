@@ -45,6 +45,38 @@ class FillColumn(DataMorpher):
         return df
     
 
+class FilterRows(DataMorpher):
+    def __init__(self, first_column: str, second_column: str, logic: str):
+        """Logic can be e, g, l, ge, le."""
+        self.first_column = first_column
+        self.second_column = second_column
+        self.logic = logic
+
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Filters rows based on a condition in the specified column."""
+        if self.logic == 'e':
+            df = df.loc[
+                df[self.first_column] == df[self.second_column]
+            ]
+        elif self.logic == 'g':
+            df = df.loc[
+                df[self.first_column] > df[self.second_column]
+            ]
+        elif self.logic == 'ge':
+            df = df.loc[
+                df[self.first_column] >= df[self.second_column]
+            ]
+        elif self.logic == 'l':
+            df = df.loc[
+                df[self.first_column] < df[self.second_column]
+            ]
+        elif self.logic == 'le':
+            df = df.loc[
+                df[self.first_column] <= df[self.second_column]
+            ]
+        return df
+    
+
 class MultiplyColumns(DataMorpher):
     def __init__(self, first_column: str, second_column: str, output_column: str):
         self.first_column = first_column
