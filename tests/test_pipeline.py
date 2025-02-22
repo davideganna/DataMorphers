@@ -11,9 +11,7 @@ def generate_mock_df():
         {
             'A': [1, 2, 3],
             'B': [4, 5, np.nan],
-            'NA_col': ['a', 'b', np.nan],
-            'ToRemove': ['a', 'b', 'c'],
-            'ToRename': [1, 2, 3],
+            'C': [7, 8, 9],
         }
     )
     return df
@@ -22,29 +20,29 @@ def generate_mock_df():
 def test_create_column():
     """
     CreateColumn:
-        column_name: C
-        value: 7
+        column_name: D
+        value: 999
     """
-    config = get_pipeline_config(yaml_path=YAML_PATH)
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_CreateColumn')
 
     df = generate_mock_df()
     df = run_pipeline(df, config=config)
 
-    assert 'C' in df.columns
-    assert df['C'].unique()[0] == 7
+    assert 'D' in df.columns
+    assert df['D'].unique()[0] == 999
 
 
 def test_dropna():
     """
     DropNA:
-        column_name: NA_col
+        column_name: B
     """
-    config = get_pipeline_config(yaml_path=YAML_PATH)
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_DropNA')
 
     df = generate_mock_df()
     df = run_pipeline(df, config=config)
 
-    assert np.nan not in df['NA_col']
+    assert np.nan not in df['B']
 
 
 def test_fill_column():
@@ -53,8 +51,8 @@ def test_fill_column():
         column_name: B
         value: 0
     """
-    config = get_pipeline_config(yaml_path=YAML_PATH)
-    
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_FillColumn')
+
     df = generate_mock_df()
     df = run_pipeline(df, config=config)
 
@@ -69,8 +67,8 @@ def test_filter_rows():
         second_column: B
         logic: le
     """
-    config = get_pipeline_config(yaml_path=YAML_PATH)
-    
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_FilterRows')
+
     df = generate_mock_df()
     df = run_pipeline(df, config=config)
 
@@ -85,18 +83,18 @@ def test_merge_dataframes():
     """
     MergeDataFrames:
         df_to_join: df_2
-        join_cols: ['A']
+        join_cols: ['A', 'B']
         how: inner
         suffixes: ['_1', '_2']
     """
-    config = get_pipeline_config(yaml_path=YAML_PATH)
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_MergeDataFrames')
 
     df = generate_mock_df()
     second_df = generate_mock_df()
     df = run_pipeline(df, config=config, extra_dfs={'df_2': second_df})
 
-    assert 'B_1' in df.columns
-    assert 'B_2' in df.columns
+    assert 'C_1' in df.columns
+    assert 'C_2' in df.columns
 
 
 def test_multiply_columns():
@@ -106,7 +104,7 @@ def test_multiply_columns():
         second_column: B
         resulting_column: mul
     """
-    config = get_pipeline_config(yaml_path=YAML_PATH)
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_MultiplyColumns')
 
     df = generate_mock_df()
     df = run_pipeline(df, config=config)
@@ -121,7 +119,7 @@ def test_normalize_column():
         column_name: A
         output_column: A_norm
     """
-    config = get_pipeline_config(yaml_path=YAML_PATH)
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_NormalizeColumn')
 
     df = generate_mock_df()
     df = run_pipeline(df, config=config)
@@ -133,14 +131,14 @@ def test_normalize_column():
 def test_remove_column():
     """
     RemoveColumn:
-        column_name: ToRemove
+        column_name: A
     """
-    config = get_pipeline_config(yaml_path=YAML_PATH)
-    
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_RemoveColumn')
+
     df = generate_mock_df()
     df = run_pipeline(df, config=config)
 
-    assert 'ToRemove' not in df.columns
+    assert 'A' not in df.columns
 
 
 def test_rename_column():
@@ -149,10 +147,10 @@ def test_rename_column():
         old_column_name: ToRename
         new_columnName: RenamedColumn
     """
-    config = get_pipeline_config(yaml_path=YAML_PATH)
-    
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_RenameColumn')
+
     df = generate_mock_df()
     df = run_pipeline(df, config=config)
 
-    assert 'ToRename' not in df.columns
+    assert 'A' not in df.columns
     assert 'RenamedColumn' in df.columns

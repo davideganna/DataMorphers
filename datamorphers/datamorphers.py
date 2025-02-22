@@ -12,7 +12,7 @@ class CreateColumn(DataMorpher):
         """Adds a new column with a constant value to the dataframe."""
         df[self.column_name] = self.value
         return df
-    
+
 
 class DropNA(DataMorpher):
     def __init__(self, column_name: str):
@@ -22,7 +22,7 @@ class DropNA(DataMorpher):
         """Drops rows with any NaN values."""
         df = df.dropna(subset=self.column_name)
         return df
-    
+
 
 class FillColumn(DataMorpher):
     def __init__(self, column_name: str, value: Any):
@@ -33,7 +33,7 @@ class FillColumn(DataMorpher):
         """Fills NaN values in the specified column with the provided value."""
         df[self.column_name] = df[self.column_name].fillna(self.value)
         return df
-    
+
 
 class FilterRows(DataMorpher):
     def __init__(self, first_column: str, second_column: str, logic: str):
@@ -65,7 +65,7 @@ class FilterRows(DataMorpher):
                 df[self.first_column] <= df[self.second_column]
             ]
         return df
-    
+
 
 class MergeDataFrames(DataMorpher):
     def __init__(self, df_to_join: pd.DataFrame, join_cols: list, how: str, suffixes: list):
@@ -89,7 +89,7 @@ class MergeDataFrames(DataMorpher):
             suffixes=self.suffixes,
         )
         return merged_df
-    
+
 
 class MultiplyColumns(DataMorpher):
     def __init__(self, first_column: str, second_column: str, output_column: str):
@@ -114,7 +114,7 @@ class NormalizeColumn(DataMorpher):
         """Normalize a numerical column in the dataframe using Z-score normalization."""
         df[self.output_column] = (df[self.column_name] - df[self.column_name].mean()) / df[self.column_name].std()
         return df
-    
+
 
 class RemoveColumn(DataMorpher):
     def __init__(self, column_name: str):
@@ -124,7 +124,7 @@ class RemoveColumn(DataMorpher):
         """Removes a specified column from the DataFrame."""
         df = df.drop(columns=[self.column_name], errors='ignore')
         return df
-    
+
 
 class RenameColumn(DataMorpher):
     def __init__(self, old_column_name: str, new_column_name: str):

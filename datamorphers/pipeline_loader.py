@@ -1,6 +1,7 @@
 import yaml
 import logging
 import datamorphers.datamorphers as datamorphers
+import datamorphers.custom_datamorphers as custom_datamorphers
 import pandas as pd
 from typing import Any
 from datamorphers.base import DataMorpher
@@ -8,9 +9,10 @@ from datamorphers.base import DataMorpher
 logger = logging.Logger(__name__)
 
 
-def get_pipeline_config(yaml_path: str):
+def get_pipeline_config(yaml_path: str, pipeline_name: str):
     with open(yaml_path, 'r') as yaml_config:
         config = yaml.safe_load(yaml_config)
+    config['pipeline_name'] = pipeline_name
     return config
 
 
@@ -25,10 +27,19 @@ def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict={}):
 
     :returns: Transformed DataFrame.
     """
-    for cls, args in config['pipeline'].items():
+    for cls, args in config[f"{config['pipeline_name']}"].items():
         try:
+            # Try getting the class from custom datamorphers first so that
+            #   custom DataMorphers override default ones.
+            if hasattr(custom_datamorphers, cls):
+                module = custom_datamorphers
+            elif hasattr(datamorphers, cls):
+                module = datamorphers
+            else:
+                raise ValueError(f"Unknown DataMorpher: {cls}")
+
             # Get the DataMorpher class
-            datamorpher_cls: DataMorpher = getattr(datamorphers, cls)
+            datamorpher_cls: DataMorpher = getattr(module, cls)
 
             # Should the class require extra DataFrames (e.g., MergeDataFrames DataMorpher),
             #   the args are handled here.
@@ -43,5 +54,4 @@ def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict={}):
         except Exception as exc:
             logger.error(f"Error in {cls}: {exc}")
 
-    return df 
-        
+    return df
