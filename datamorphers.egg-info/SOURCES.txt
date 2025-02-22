@@ -1,0 +1,10 @@
+setup.py
+datamorphers/__init__.py
+datamorphers/base.py
+datamorphers/datamorphers.py
+datamorphers/pipeline_loader.py
+datamorphers.egg-info/PKG-INFO
+datamorphers.egg-info/SOURCES.txt
+datamorphers.egg-info/dependency_links.txt
+datamorphers.egg-info/top_level.txt
+tests/test_pipeline.py

@@ -2,7 +2,7 @@
 
 import pandas as pd
 import numpy as np
-from src.pipeline_loader import get_pipeline_config, run_pipeline
+from datamorphers.pipeline_loader import get_pipeline_config, run_pipeline
 
 YAML_PATH = 'tests/test_pipeline.yaml'
 

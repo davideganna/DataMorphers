@@ -1,9 +1,9 @@
 import yaml
 import logging
-import src.datamorphers as datamorphers
+import datamorphers.datamorphers as datamorphers
 import pandas as pd
 from typing import Any
-from src.base import DataMorpher
+from datamorphers.base import DataMorpher
 
 logger = logging.Logger(__name__)
 
