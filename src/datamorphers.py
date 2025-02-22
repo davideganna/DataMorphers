@@ -1,16 +1,6 @@
 import pandas as pd
-from abc import ABC, abstractmethod
 from typing import Any
-
-
-class DataMorpher(ABC):
-    @abstractmethod
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Applies a transformation on the DataFrame.
-        Each concrete class must implement this method.
-        """
-        pass
+from src.base import DataMorpher
 
 
 class CreateColumn(DataMorpher):
@@ -75,6 +65,30 @@ class FilterRows(DataMorpher):
                 df[self.first_column] <= df[self.second_column]
             ]
         return df
+    
+
+class MergeDataFrames(DataMorpher):
+    def __init__(self, df_to_join: pd.DataFrame, join_cols: list, how: str, suffixes: list):
+        self.df_to_join = df_to_join
+        self.join_cols = join_cols
+        self.how = how
+        self.suffixes = suffixes
+
+    @staticmethod
+    def _handle_args(args: dict, extra_dfs: dict):
+        args['df_to_join'] = extra_dfs[args['df_to_join']]
+        return args
+
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Merges two DataFrames."""
+        merged_df = pd.merge(
+            df,
+            self.df_to_join,
+            on=self.join_cols,
+            how=self.how,
+            suffixes=self.suffixes,
+        )
+        return merged_df
     
 
 class MultiplyColumns(DataMorpher):

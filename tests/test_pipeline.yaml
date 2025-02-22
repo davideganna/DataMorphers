@@ -15,6 +15,12 @@ pipeline:
     second_column: B
     logic: le
 
+  MergeDataFrames:
+    df_to_join: df_2
+    join_cols: ['A']
+    how: inner
+    suffixes: ['_1', '_2']
+
   MultiplyColumns:
     first_column: A
     second_column: B

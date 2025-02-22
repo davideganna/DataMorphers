@@ -81,6 +81,24 @@ def test_filter_rows():
     assert df.equals(res)
 
 
+def test_merge_dataframes():
+    """
+    MergeDataFrames:
+        df_to_join: df_2
+        join_cols: ['A']
+        how: inner
+        suffixes: ['_1', '_2']
+    """
+    config = get_pipeline_config(yaml_path=YAML_PATH)
+
+    df = generate_mock_df()
+    second_df = generate_mock_df()
+    df = run_pipeline(df, config=config, extra_dfs={'df_2': second_df})
+
+    assert 'B_1' in df.columns
+    assert 'B_2' in df.columns
+
+
 def test_multiply_columns():
     """
     MultiplyColumns:
