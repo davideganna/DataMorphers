@@ -22,13 +22,13 @@ DataMorphers is a Python library that provides a framework for transforming Pand
 To install DataMorphers in your project:
 
 ```sh
-pip install git+https://github.com/yourusername/datamorphers.git
+pip install git+https://github.com/davideganna/datamorphers.git
 ```
 
 If you're developing locally:
 
 ```sh
-git clone https://github.com/yourusername/datamorphers.git
+git clone https://github.com/davideganna/datamorphers.git
 cd datamorphers
 pip install -e .
 ```
@@ -44,10 +44,12 @@ pipeline:
   CreateColumn:
     column_name: "new_col"
     value: 42
+
   MultiplyColumns:
     first_column: "col1"
     second_column: "col2"
     output_column: "product_col"
+
   MergeDataFrames:
     df_to_join: "df_extra"
     join_cols: ["id"]
@@ -74,7 +76,7 @@ print(transformed_df)
 
 ## Extending DataMorphers
 
-You can create custom transformations by extending the `DataMorpher` class:
+You can create custom transformations by extending the `DataMorpher` class inside a module named `custom_datamorphers.py`:
 
 ```python
 from datamorphers.datamorphers import DataMorpher
@@ -109,4 +111,3 @@ Contributions are welcome! Please open an issue or submit a pull request.
 ## License
 
 MIT License. See `LICENSE` for details.
-
