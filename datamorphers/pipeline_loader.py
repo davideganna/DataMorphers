@@ -1,7 +1,7 @@
 import yaml
 import logging
 import datamorphers.datamorphers as datamorphers
-import datamorphers.custom_datamorphers as custom_datamorphers
+import importlib
 import pandas as pd
 from typing import Any
 from datamorphers.base import DataMorpher
@@ -9,7 +9,7 @@ from datamorphers.base import DataMorpher
 logger = logging.Logger(__name__)
 
 
-def get_pipeline_config(yaml_path: str, pipeline_name: str):
+def get_pipeline_config(yaml_path: str, pipeline_name: str) -> dict:
     with open(yaml_path, 'r') as yaml_config:
         config = yaml.safe_load(yaml_config)
     config['pipeline_name'] = pipeline_name
@@ -27,11 +27,19 @@ def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict={}):
 
     :returns: Transformed DataFrame.
     """
+    # Try to install custom_datamorphers, a module where the user can define
+    #   their specific transformations.
+    try:
+        custom_datamorphers = importlib.import_module("custom_datamorphers")
+    except ModuleNotFoundError:
+        logger.info("Module custom_datamorphers not found. Custom DataMorphers implementations will not be loaded.")
+        custom_datamorphers = None
+
     for cls, args in config[f"{config['pipeline_name']}"].items():
         try:
             # Try getting the class from custom datamorphers first so that
             #   custom DataMorphers override default ones.
-            if hasattr(custom_datamorphers, cls):
+            if custom_datamorphers and hasattr(custom_datamorphers, cls):
                 module = custom_datamorphers
             elif hasattr(datamorphers, cls):
                 module = datamorphers

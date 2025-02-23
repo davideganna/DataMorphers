@@ -22,13 +22,13 @@ DataMorphers is a Python library that provides a framework for transforming Pand
 To install DataMorphers in your project:
 
 ```sh
-pip install git+https://github.com/davideganna/datamorphers.git
+pip install git+https://github.com/davideganna/DataMorph.git
 ```
 
 If you're developing locally:
 
 ```sh
-git clone https://github.com/davideganna/datamorphers.git
+git clone https://github.com/davideganna/DataMorph.git
 cd datamorphers
 pip install -e .
 ```
