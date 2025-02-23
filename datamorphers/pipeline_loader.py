@@ -10,13 +10,13 @@ logger = logging.Logger(__name__)
 
 
 def get_pipeline_config(yaml_path: str, pipeline_name: str) -> dict:
-    with open(yaml_path, 'r') as yaml_config:
+    with open(yaml_path, "r") as yaml_config:
         config = yaml.safe_load(yaml_config)
-    config['pipeline_name'] = pipeline_name
+    config["pipeline_name"] = pipeline_name
     return config
 
 
-def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict={}):
+def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict = {}):
     """
     Runs the pipeline transformations sequentially.
 
@@ -33,7 +33,9 @@ def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict={}):
         custom_datamorphers = importlib.import_module("custom_datamorphers")
         logger.info("Successfully imported module custom_datamorphers.")
     except ModuleNotFoundError:
-        logger.info("Module custom_datamorphers not found. Custom DataMorphers implementations will not be loaded.")
+        logger.info(
+            "Module custom_datamorphers not found. Custom DataMorphers implementations will not be loaded."
+        )
         custom_datamorphers = None
 
     # Define the single DataMorpher inside a list of DataMorphers

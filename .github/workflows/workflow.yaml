@@ -23,6 +23,9 @@ jobs:
       - name: Install package
         run: pip install -e .
 
+      - name: Run Black
+        run: black --check .
+
       - name: Run tests with coverage
         run: pytest --cov=datamorphers --cov-report=xml
 

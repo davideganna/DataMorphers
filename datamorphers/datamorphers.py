@@ -2,6 +2,7 @@ import pandas as pd
 from typing import Any
 from datamorphers.base import DataMorpher
 
+
 class AddColumn(DataMorpher):
     def __init__(self, column_name: str, value: Any):
         self.column_name = column_name
@@ -12,8 +13,11 @@ class AddColumn(DataMorpher):
         df[self.column_name] = self.value
         return df
 
+
 class ColumnsOperator(DataMorpher):
-    def __init__(self, first_column: str, second_column: str, logic: str, output_column: str):
+    def __init__(
+        self, first_column: str, second_column: str, logic: str, output_column: str
+    ):
         """Logic can be sum, sub, mul, div."""
         self.first_column = first_column
         self.second_column = second_column
@@ -26,13 +30,13 @@ class ColumnsOperator(DataMorpher):
             the values inanother column.
         Renames the resulting column as 'output_column'.
         """
-        if self.logic == 'sum':
+        if self.logic == "sum":
             df[self.output_column] = df[self.first_column] + df[self.second_column]
-        if self.logic == 'sub':
+        if self.logic == "sub":
             df[self.output_column] = df[self.first_column] - df[self.second_column]
-        if self.logic == 'mul':
+        if self.logic == "mul":
             df[self.output_column] = df[self.first_column] * df[self.second_column]
-        if self.logic == 'div':
+        if self.logic == "div":
             df[self.output_column] = df[self.first_column] / df[self.second_column]
         return df
 
@@ -67,26 +71,16 @@ class FilterRows(DataMorpher):
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """Filters rows based on a condition in the specified column."""
-        if self.logic == 'e':
-            df = df.loc[
-                df[self.first_column] == df[self.second_column]
-            ]
-        elif self.logic == 'g':
-            df = df.loc[
-                df[self.first_column] > df[self.second_column]
-            ]
-        elif self.logic == 'ge':
-            df = df.loc[
-                df[self.first_column] >= df[self.second_column]
-            ]
-        elif self.logic == 'l':
-            df = df.loc[
-                df[self.first_column] < df[self.second_column]
-            ]
-        elif self.logic == 'le':
-            df = df.loc[
-                df[self.first_column] <= df[self.second_column]
-            ]
+        if self.logic == "e":
+            df = df.loc[df[self.first_column] == df[self.second_column]]
+        elif self.logic == "g":
+            df = df.loc[df[self.first_column] > df[self.second_column]]
+        elif self.logic == "ge":
+            df = df.loc[df[self.first_column] >= df[self.second_column]]
+        elif self.logic == "l":
+            df = df.loc[df[self.first_column] < df[self.second_column]]
+        elif self.logic == "le":
+            df = df.loc[df[self.first_column] <= df[self.second_column]]
         return df
 
 
@@ -100,19 +94,21 @@ class MathOperator(DataMorpher):
 
     def _datamorph(self, df):
         """Math operation between a column and a value, with the operation defined in logic."""
-        if self.logic == 'sum':
+        if self.logic == "sum":
             df[self.output_column] = df[self.column_name] + self.value
-        elif self.logic == 'sub':
+        elif self.logic == "sub":
             df[self.output_column] = df[self.column_name] - self.value
-        elif self.logic == 'mul':
+        elif self.logic == "mul":
             df[self.output_column] = df[self.column_name] * self.value
-        elif self.logic == 'div':
+        elif self.logic == "div":
             df[self.output_column] = df[self.column_name] / self.value
         return df
 
 
 class MergeDataFrames(DataMorpher):
-    def __init__(self, df_to_join: pd.DataFrame, join_cols: list, how: str, suffixes: list):
+    def __init__(
+        self, df_to_join: pd.DataFrame, join_cols: list, how: str, suffixes: list
+    ):
         self.df_to_join = df_to_join
         self.join_cols = join_cols
         self.how = how
@@ -120,7 +116,7 @@ class MergeDataFrames(DataMorpher):
 
     @staticmethod
     def _handle_args(args: dict, extra_dfs: dict):
-        args['df_to_join'] = extra_dfs[args['df_to_join']]
+        args["df_to_join"] = extra_dfs[args["df_to_join"]]
         return args
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -142,17 +138,21 @@ class NormalizeColumn(DataMorpher):
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """Normalize a numerical column in the dataframe using Z-score normalization."""
-        df[self.output_column] = (df[self.column_name] - df[self.column_name].mean()) / df[self.column_name].std()
+        df[self.output_column] = (
+            df[self.column_name] - df[self.column_name].mean()
+        ) / df[self.column_name].std()
         return df
 
 
 class RemoveColumns(DataMorpher):
     def __init__(self, columns_name: list | str):
-        self.columns_name = columns_name if type(columns_name) is list else [columns_name]
+        self.columns_name = (
+            columns_name if type(columns_name) is list else [columns_name]
+        )
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """Removes a specified column from the DataFrame."""
-        df = df.drop(columns=self.columns_name, errors='ignore')
+        df = df.drop(columns=self.columns_name, errors="ignore")
         return df
 
 
