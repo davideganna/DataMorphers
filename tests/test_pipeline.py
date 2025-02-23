@@ -79,6 +79,33 @@ def test_filter_rows():
     assert df.equals(res)
 
 
+def test_math_operator():
+    """
+    MathOperator:
+        column_name: A
+        logic: div
+        value: 3
+        output_column: div_col
+
+    MathOperator:
+        column_name: A
+        logic: sum
+        value: 3
+        output_column: sum_col
+    """
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_MathOperator')
+
+    df = generate_mock_df()
+    df = run_pipeline(df, config=config)
+
+    res_div = df['A'] / 3
+    res_sum = df['A'] + 3
+
+    assert df['div_col'].equals(res_div)
+    assert df['sum_col'].equals(res_sum)
+
+
+
 def test_merge_dataframes():
     """
     MergeDataFrames:

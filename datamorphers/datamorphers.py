@@ -67,6 +67,27 @@ class FilterRows(DataMorpher):
         return df
 
 
+class MathOperator(DataMorpher):
+    def __init__(self, column_name: str, logic: str, value: float, output_column: str):
+        """Logic can be sum, sub, mul, div."""
+        self.column_name = column_name
+        self.logic = logic
+        self.value = value
+        self.output_column = output_column
+
+    def _datamorph(self, df):
+        """Math operation between a column and a value, with the operation defined in logic."""
+        if self.logic == 'sum':
+            df[self.output_column] = df[self.column_name] + self.value
+        elif self.logic == 'sub':
+            df[self.output_column] = df[self.column_name] - self.value
+        elif self.logic == 'mul':
+            df[self.output_column] = df[self.column_name] * self.value
+        elif self.logic == 'div':
+            df[self.output_column] = df[self.column_name] / self.value
+        return df
+
+
 class MergeDataFrames(DataMorpher):
     def __init__(self, df_to_join: pd.DataFrame, join_cols: list, how: str, suffixes: list):
         self.df_to_join = df_to_join

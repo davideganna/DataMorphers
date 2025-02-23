@@ -2,7 +2,7 @@
 
 ## Overview
 
-DataMorphers is a Python library that provides a framework for transforming Pandas DataFrames using a modular and configurable approach. Each transformation is implemented as a **DataMorpher**, allowing users to sequentially apply transformations using a YAML configuration.
+DataMorph is a Python library that provides a framework for transforming Pandas DataFrames using a modular pipeline approach. Transformations are defined in a YAML configuration, and are applied sequentially to your dataset.
 
 ## Features
 
@@ -19,7 +19,7 @@ DataMorphers is a Python library that provides a framework for transforming Pand
 
 ## Installation
 
-To install DataMorphers in your project:
+To install DataMorph in your project:
 
 ```sh
 pip install git+https://github.com/davideganna/DataMorph.git
@@ -74,26 +74,65 @@ transformed_df = run_pipeline(df, config, extra_dfs={"df_extra": extra_df})
 print(transformed_df)
 ```
 
-## Extending DataMorphers
+# Extending `datamorphers` with Custom Implementations
 
-You can create custom transformations by extending the `DataMorpher` class inside a module named `custom_datamorphers.py`:
+The `datamorphers` package allows you to define custom transformations by implementing your own DataMorphers. These custom implementations extend the base ones and can be used seamlessly within the pipeline.
+
+## 1. Creating a Custom DataMorpher
+
+To define a custom transformation, create a `custom_datamorphers.py` file in your project and implement a new class that follows the `DataMorpher` structure:
 
 ```python
+import pandas as pd
 from datamorphers.datamorphers import DataMorpher
 
-class CustomTransform(DataMorpher):
+class MultiplyColumnByValue(DataMorpher):
+    def __init__(self, column_name: str, value: float, output_column: str):
+        self.column_name = column_name
+        self.value = value
+        self.output_column = output_column
+
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
-        df["custom_col"] = df["existing_col"] * 2
+        df[self.output_column] = df[self.column_name] * self.value
         return df
 ```
 
-## Running Tests
+---
 
-DataMorphers uses **pytest** for testing. To run tests:
+## 2. Importing Custom DataMorphers
 
-```sh
-pytest -v
+To use your custom implementations, ensure you import both the base `datamorphers` and your custom module:
+
+```python
+from datamorphers import datamorphers
+import custom_datamorphers  # Import custom transformations
 ```
+
+The pipeline will first check for the specified DataMorpher in `custom_datamorphers`. If it's not found, it will fall back to the default ones in `datamorphers`. This allows for seamless extension without modifying the base package.
+
+---
+
+## 3. Running the Pipeline with Custom DataMorphers
+
+When defining a pipeline configuration (e.g., in a YAML file), simply reference your custom DataMorpher as you would with a base one:
+
+```yaml
+custom_pipeline:
+  MultiplyColumnByValue:
+    column_name: "price"
+    value: 1.2
+    output_column: "adjusted_price"
+```
+
+Then, execute the pipeline as usual:
+
+```python
+df_transformed = run_pipeline(df, config)
+```
+
+If a custom module is provided, your custom transformations will be used instead of or in addition to the built-in ones.
+
+---
 
 ## Pre-commit Hooks
 

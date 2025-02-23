@@ -32,36 +32,39 @@ def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict={}):
     try:
         custom_datamorphers = importlib.import_module("custom_datamorphers")
         logger.info("Successfully imported module custom_datamorphers.")
-        print(f"custom_datamorphers module: {custom_datamorphers}")  # Debugging line
     except ModuleNotFoundError:
         logger.info("Module custom_datamorphers not found. Custom DataMorphers implementations will not be loaded.")
         custom_datamorphers = None
 
-    for cls, args in config[f"{config['pipeline_name']}"].items():
-        try:
-            # Try getting the class from custom datamorphers first so that
-            #   custom DataMorphers override default ones.
-            if custom_datamorphers and hasattr(custom_datamorphers, cls):
-                module = custom_datamorphers
-            elif hasattr(datamorphers, cls):
-                module = datamorphers
-            else:
-                raise ValueError(f"Unknown DataMorpher: {cls}")
+    # Define the single DataMorpher inside a list of DataMorphers
+    _dm: dict
 
-            # Get the DataMorpher class
-            datamorpher_cls: DataMorpher = getattr(module, cls)
+    for _dm in config[f"{config['pipeline_name']}"]:
+        for cls, args in _dm.items():
+            try:
+                # Try getting the class from custom datamorphers first so that
+                #   custom DataMorphers override default ones.
+                if custom_datamorphers and hasattr(custom_datamorphers, cls):
+                    module = custom_datamorphers
+                elif hasattr(datamorphers, cls):
+                    module = datamorphers
+                else:
+                    raise ValueError(f"Unknown DataMorpher: {cls}")
 
-            # Should the class require extra DataFrames (e.g., MergeDataFrames DataMorpher),
-            #   the args are handled here.
-            args = datamorpher_cls._handle_args(args, extra_dfs)
+                # Get the DataMorpher class
+                datamorpher_cls: DataMorpher = getattr(module, cls)
 
-            # Instantiate the DataMorpher object with the updated args.
-            datamorpher: DataMorpher = datamorpher_cls(**args)
+                # Should the class require extra DataFrames (e.g., MergeDataFrames DataMorpher),
+                #   the args are handled here.
+                args = datamorpher_cls._handle_args(args, extra_dfs)
 
-            # Transform the DataFrame.
-            df = datamorpher._datamorph(df)
+                # Instantiate the DataMorpher object with the updated args.
+                datamorpher: DataMorpher = datamorpher_cls(**args)
 
-        except Exception as exc:
-            logger.error(f"Error in {cls}: {exc}")
+                # Transform the DataFrame.
+                df = datamorpher._datamorph(df)
+
+            except Exception as exc:
+                logger.error(f"Error in {cls}: {exc}")
 
     return df
