@@ -27,7 +27,7 @@ jobs:
         run: black --check .
 
       - name: Run tests with coverage
-        run: pytest --cov=datamorphers --cov-report=xml
+        run: pytest -v --disable-pytest-warnings --cov=datamorphers --cov-report=xml
 
       - name: Upload coverage report to Codecov
         uses: codecov/codecov-action@v3
