@@ -20,6 +20,9 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
 
+      - name: Install package
+        run: pip install -e .
+
       - name: Run tests with coverage
         run: pytest --cov=datamorphers --cov-report=xml
 
