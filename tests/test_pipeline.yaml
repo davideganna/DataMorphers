@@ -1,59 +1,30 @@
-pipeline_CreateColumn:
-  - CreateColumn:
-      column_name: D
-      value: 999
+pipeline_food:
+  - AddColumn:
+      column_name: food_marker
+      value: food
 
-pipeline_DropNA:
-  - DropNA:
-      column_name: B
+  - FilterRows:
+      first_column: item_type
+      second_column: food_marker
+      logic: e
 
-pipeline_FillColumn:
-  - FillColumn:
-      column_name: B
+  - FillNA:
+      column_name: discount_pct
       value: 0
 
-pipeline_FilterRows:
-  - FilterRows:
-      first_column: A
-      second_column: B
-      logic: le
+  - ColumnsOperator:
+      first_column: price
+      second_column: discount_pct
+      logic: mul
+      output_column: discount_amount
 
-pipeline_MathOperator:
-  - MathOperator:
-      column_name: A
-      logic: div
-      value: 3
-      output_column: div_col
+  - ColumnsOperator:
+      first_column: price
+      second_column: discount_amount
+      logic: sub
+      output_column: discounted_price
 
-  - MathOperator:
-      column_name: A
-      logic: sum
-      value: 3
-      output_column: sum_col
-
-pipeline_MergeDataFrames:
-  - MergeDataFrames:
-      df_to_join: df_2
-      join_cols: ['A', 'B']
-      how: inner
-      suffixes: ['_1', '_2']
-
-pipeline_MultiplyColumns:
-  - MultiplyColumns:
-      first_column: A
-      second_column: B
-      output_column: mul
-
-pipeline_NormalizeColumn:
-  - NormalizeColumn:
-      column_name: A
-      output_column: A_norm
-
-pipeline_RemoveColumn:
-  - RemoveColumn:
-      column_name: A
-
-pipeline_RenameColumn:
-  - RenameColumn:
-      old_column_name: A
-      new_column_name: RenamedColumn
+  - RemoveColumns:
+      columns_name:
+        - discount_amount
+        - food_marker

@@ -9,175 +9,64 @@ YAML_PATH = 'tests/test_pipeline.yaml'
 def generate_mock_df():
     df = pd.DataFrame(
         {
-            'A': [1, 2, 3],
-            'B': [4, 5, np.nan],
-            'C': [7, 8, 9],
+            'item': ['apple', 'TV', 'banana', 'pasta', 'cake'],
+            'item_type': ['food', 'electronics', 'food', 'food', 'food'],
+            'price': [3, 100, 2.5, 3, 15],
+            'discount_pct': [0.1, 0.05, np.nan, 0.12, np.nan],
         }
     )
     return df
 
 
-def test_create_column():
+def test_pipeline():
     """
-    CreateColumn:
-        column_name: D
-        value: 999
-    """
-    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_CreateColumn')
+    - AddColumn:
+        column_name: food_marker
+        value: food
 
-    df = generate_mock_df()
-    df = run_pipeline(df, config=config)
+    - FilterRows:
+        first_column: item_type
+        second_column: food_marker
+        logic: e
 
-    assert 'D' in df.columns
-    assert df['D'].unique()[0] == 999
-
-
-def test_dropna():
-    """
-    DropNA:
-        column_name: B
-    """
-    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_DropNA')
-
-    df = generate_mock_df()
-    df = run_pipeline(df, config=config)
-
-    assert np.nan not in df['B']
-
-
-def test_fill_column():
-    """
-    FillColumn:
-        column_name: B
+    - FillNA:
+        column_name: discount_pct
         value: 0
+
+    - ColumnsOperator:
+        first_column: price
+        second_column: discount_pct
+        logic: mul
+        output_column: discount_amount
+
+    - ColumnsOperator:
+        first_column: price
+        second_column: discount_amount
+        logic: sub
+        output_column: discounted_price
+
+    - RemoveColumns:
+        columns_name:
+            - discount_amount
+            - food_marker
     """
-    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_FillColumn')
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_food')
 
     df = generate_mock_df()
+    print('\n')
+    print(df.to_markdown(index=False))
     df = run_pipeline(df, config=config)
 
-    assert np.nan not in df['B']
-    assert 0 in df['B']
+    res_df = pd.DataFrame(
+        {
+            'item': {0: 'apple', 2: 'banana', 3: 'pasta', 4: 'cake'},
+            'item_type': {0: 'food', 2: 'food', 3: 'food', 4: 'food'},
+            'price': {0: 3.0, 2: 2.5, 3: 3.0, 4: 15.0},
+            'discount_pct': {0: 0.1, 2: 0.0, 3: 0.12, 4: 0.0},
+            'discounted_price': {0: 2.7, 2: 2.5, 3: 2.64, 4: 15.0}
+        }
+    )
+    print('\n')
+    print(df.to_markdown(index=False))
 
-
-def test_filter_rows():
-    """
-    FilterRows:
-        first_column: A
-        second_column: B
-        logic: le
-    """
-    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_FilterRows')
-
-    df = generate_mock_df()
-    df = run_pipeline(df, config=config)
-
-    res = df.loc[
-        df['A'] <= df['B']
-    ]
-
-    assert df.equals(res)
-
-
-def test_math_operator():
-    """
-    MathOperator:
-        column_name: A
-        logic: div
-        value: 3
-        output_column: div_col
-
-    MathOperator:
-        column_name: A
-        logic: sum
-        value: 3
-        output_column: sum_col
-    """
-    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_MathOperator')
-
-    df = generate_mock_df()
-    df = run_pipeline(df, config=config)
-
-    res_div = df['A'] / 3
-    res_sum = df['A'] + 3
-
-    assert df['div_col'].equals(res_div)
-    assert df['sum_col'].equals(res_sum)
-
-
-
-def test_merge_dataframes():
-    """
-    MergeDataFrames:
-        df_to_join: df_2
-        join_cols: ['A', 'B']
-        how: inner
-        suffixes: ['_1', '_2']
-    """
-    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_MergeDataFrames')
-
-    df = generate_mock_df()
-    second_df = generate_mock_df()
-    df = run_pipeline(df, config=config, extra_dfs={'df_2': second_df})
-
-    assert 'C_1' in df.columns
-    assert 'C_2' in df.columns
-
-
-def test_multiply_columns():
-    """
-    MultiplyColumns:
-        first_column: A
-        second_column: B
-        resulting_column: mul
-    """
-    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_MultiplyColumns')
-
-    df = generate_mock_df()
-    df = run_pipeline(df, config=config)
-
-    assert 'mul' in df.columns
-    assert (df['A'] * df['B']).equals(df['mul'])
-
-
-def test_normalize_column():
-    """
-    NormalizeColumn:
-        column_name: A
-        output_column: A_norm
-    """
-    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_NormalizeColumn')
-
-    df = generate_mock_df()
-    df = run_pipeline(df, config=config)
-
-    assert 'A_norm' in df.columns
-    assert ((df['A'] - df['A'].mean()) / df['A'].std()).equals(df['A_norm'])
-
-
-def test_remove_column():
-    """
-    RemoveColumn:
-        column_name: A
-    """
-    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_RemoveColumn')
-
-    df = generate_mock_df()
-    df = run_pipeline(df, config=config)
-
-    assert 'A' not in df.columns
-
-
-def test_rename_column():
-    """
-    RenameColumn:
-        old_column_name: ToRename
-        new_columnName: RenamedColumn
-    """
-    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_RenameColumn')
-
-    df = generate_mock_df()
-    df = run_pipeline(df, config=config)
-
-    assert 'A' not in df.columns
-    assert 'RenamedColumn' in df.columns
+    assert df.equals(res_df)

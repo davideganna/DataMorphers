@@ -2,8 +2,7 @@ import pandas as pd
 from typing import Any
 from datamorphers.base import DataMorpher
 
-
-class CreateColumn(DataMorpher):
+class AddColumn(DataMorpher):
     def __init__(self, column_name: str, value: Any):
         self.column_name = column_name
         self.value = value
@@ -11,6 +10,30 @@ class CreateColumn(DataMorpher):
     def _datamorph(self, df):
         """Adds a new column with a constant value to the dataframe."""
         df[self.column_name] = self.value
+        return df
+
+class ColumnsOperator(DataMorpher):
+    def __init__(self, first_column: str, second_column: str, logic: str, output_column: str):
+        """Logic can be sum, sub, mul, div."""
+        self.first_column = first_column
+        self.second_column = second_column
+        self.logic = logic
+        self.output_column = output_column
+
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Performs an operation on the values in the specified column by
+            the values inanother column.
+        Renames the resulting column as 'output_column'.
+        """
+        if self.logic == 'sum':
+            df[self.output_column] = df[self.first_column] + df[self.second_column]
+        if self.logic == 'sub':
+            df[self.output_column] = df[self.first_column] - df[self.second_column]
+        if self.logic == 'mul':
+            df[self.output_column] = df[self.first_column] * df[self.second_column]
+        if self.logic == 'div':
+            df[self.output_column] = df[self.first_column] / df[self.second_column]
         return df
 
 
@@ -24,7 +47,7 @@ class DropNA(DataMorpher):
         return df
 
 
-class FillColumn(DataMorpher):
+class FillNA(DataMorpher):
     def __init__(self, column_name: str, value: Any):
         self.column_name = column_name
         self.value = value
@@ -36,7 +59,7 @@ class FillColumn(DataMorpher):
 
 
 class FilterRows(DataMorpher):
-    def __init__(self, first_column: str, second_column: str, logic: str):
+    def __init__(self, *, first_column: str, second_column: str, logic: str):
         """Logic can be e, g, l, ge, le."""
         self.first_column = first_column
         self.second_column = second_column
@@ -112,20 +135,6 @@ class MergeDataFrames(DataMorpher):
         return merged_df
 
 
-class MultiplyColumns(DataMorpher):
-    def __init__(self, first_column: str, second_column: str, output_column: str):
-        self.first_column = first_column
-        self.second_column = second_column
-        self.output_column = output_column
-
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Multiplies the values in the specified column by another column.
-        Renames the resulting column as 'output_column'.
-        """
-        df[self.output_column] = df[self.first_column] * df[self.second_column]
-        return df
-
-
 class NormalizeColumn(DataMorpher):
     def __init__(self, column_name: str, output_column: str):
         self.column_name = column_name
@@ -137,13 +146,13 @@ class NormalizeColumn(DataMorpher):
         return df
 
 
-class RemoveColumn(DataMorpher):
-    def __init__(self, column_name: str):
-        self.column_name = column_name
+class RemoveColumns(DataMorpher):
+    def __init__(self, columns_name: list | str):
+        self.columns_name = columns_name if type(columns_name) is list else [columns_name]
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """Removes a specified column from the DataFrame."""
-        df = df.drop(columns=[self.column_name], errors='ignore')
+        df = df.drop(columns=self.columns_name, errors='ignore')
         return df
 
 

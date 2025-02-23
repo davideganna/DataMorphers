@@ -1,20 +1,20 @@
-# DataMorphers
+# DataMorph
 
 ## Overview
 
-DataMorph is a Python library that provides a framework for transforming Pandas DataFrames using a modular pipeline approach. Transformations are defined in a YAML configuration, and are applied sequentially to your dataset.
+DataMorph is a Python library that provides a flexible and extensible framework for transforming Pandas DataFrames using a modular pipeline approach. Transformations are defined in a YAML configuration, and are applied sequentially to your dataset.
 
 ## Features
 
 - Modular and extensible transformation framework.
 - Easily configurable via YAML files.
 - Supports multiple transformations, including:
-  - **CreateColumn**: Add a new column with a constant value.
-  - **MultiplyColumns**: Multiply two columns and store the result in a new column.
-  - **NormalizeColumn**: Apply Z-score normalization.
-  - **RemoveColumn**: Drop specified columns.
-  - **FillValue**: Replace missing values with a default.
-  - **MergeDataFrames**: Merge two DataFrames based on common keys.
+  - **AddColumn**: Adds a new column with a constant value.
+  - **ColumnsOperator**: Performs a math operation on two columns and stores the result in a new column.
+  - **NormalizeColumn**: Applies Z-score normalization.
+  - **RemoveColumns**: Drops specified columns.
+  - **FillNA**: Replaces missing values with a default.
+  - **MergeDataFrames**: Merges two DataFrames based on common keys.
   - And more!
 
 ## Installation
@@ -35,50 +35,101 @@ pip install -e .
 
 ## Usage
 
-### 1. Define Your Transformation Pipeline
-
-Create a YAML file specifying the transformations:
-
-```yaml
-pipeline:
-  CreateColumn:
-    column_name: "new_col"
-    value: 42
-
-  MultiplyColumns:
-    first_column: "col1"
-    second_column: "col2"
-    output_column: "product_col"
-
-  MergeDataFrames:
-    df_to_join: "df_extra"
-    join_cols: ["id"]
-    how: "left"
-```
-
-### 2. Apply Transformations in Python
+### 1. Define your initial DataFrame
 
 ```python
 import pandas as pd
-from datamorphers.pipeline import run_pipeline
 
 # Sample DataFrame
-df = pd.DataFrame({"col1": [1, 2, 3], "col2": [4, 5, 6]})
-extra_df = pd.DataFrame({"id": [1, 2, 3], "value": [10, 20, 30]})
+df = pd.DataFrame(
+  {
+      'item': ['apple', 'TV', 'banana', 'pasta', 'cake'],
+      'item_type': ['food', 'electronics', 'food', 'food', 'food'],
+      'price': [3, 100, 2.5, 3, 15],
+      'discount_pct': [0.1, 0.05, np.nan, 0.12, np.nan],
+  }
+)
 
-# Load YAML config
-config = get_pipeline_config("config.yaml")
-
-# Run pipeline
-transformed_df = run_pipeline(df, config, extra_dfs={"df_extra": extra_df})
-print(transformed_df)
+print(df)
 ```
 
-# Extending `datamorphers` with Custom Implementations
+| item   | item_type   |   price |   discount_pct |
+|:-------|:------------|--------:|---------------:|
+| apple  | food        |     3   |           0.1  |
+| TV     | electronics |   100   |           0.05 |
+| banana | food        |     2.5 |         nan    |
+| pasta  | food        |     3   |           0.12 |
+| cake   | food        |    15   |         nan    |
+
+### 2. Define Your Transformation Pipeline
+
+Imagine that we want to perform some actions on the original DataFrame.
+Specifically, we want to identify which items are food, and then calculate the price after a discount percentage is applied. After these operations, we want to polish the DataFrame by removing non interesting columns.
+
+To do so, we create a YAML file specifying a pipeline of transformations, named `config.yaml`:
+
+```yaml
+pipeline_food:
+  - AddColumn:
+      column_name: food_marker
+      value: food
+
+  - FilterRows:
+      first_column: item_type
+      second_column: food_marker
+      logic: e
+
+  - FillNA:
+      column_name: discount_pct
+      value: 0
+
+  - ColumnsOperator:
+      first_column: price
+      second_column: discount_pct
+      logic: mul
+      output_column: discount_amount
+
+  - ColumnsOperator:
+      first_column: price
+      second_column: discount_amount
+      logic: sub
+      output_column: discounted_price
+
+  - RemoveColumns:
+      columns_name:
+        - discount_amount
+        - food_marker
+```
+
+### 3. Apply the transformations as defined in the config
+
+Running the pipeline is very simple:
+
+```python
+from datamorphers.pipeline import run_pipeline
+
+# Load YAML config
+config = get_pipeline_config("config.yaml", pipeline_name='pipeline_food'))
+
+# Run pipeline
+transformed_df = run_pipeline(df, config)
+
+print(transformed_df)
+```
+| item   | item_type   |   price |   discount_pct |   discounted_price |
+|:-------|:------------|--------:|---------------:|-------------------:|
+| apple  | food        |     3   |           0.1  |               2.7  |
+| banana | food        |     2.5 |           0    |               2.5  |
+| pasta  | food        |     3   |           0.12 |               2.64 |
+| cake   | food        |    15   |           0    |              15    |
+
+---
+
+## Extending `datamorphers` with Custom Implementations
 
 The `datamorphers` package allows you to define custom transformations by implementing your own DataMorphers. These custom implementations extend the base ones and can be used seamlessly within the pipeline.
 
-## 1. Creating a Custom DataMorpher
+### Creating a Custom DataMorpher
 
 To define a custom transformation, create a `custom_datamorphers.py` file in your project and implement a new class that follows the `DataMorpher` structure:
 
@@ -86,42 +137,42 @@ To define a custom transformation, create a `custom_datamorphers.py` file in you
 import pandas as pd
 from datamorphers.datamorphers import DataMorpher
 
-class MultiplyColumnByValue(DataMorpher):
-    def __init__(self, column_name: str, value: float, output_column: str):
+class CustomTransformer(DataMorpher):
+    def __init__(self, column_name: str, value: float):
         self.column_name = column_name
         self.value = value
-        self.output_column = output_column
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
-        df[self.output_column] = df[self.column_name] * self.value
+
+        Implement your custom transformations here!
+
         return df
 ```
 
 ---
 
-## 2. Importing Custom DataMorphers
+### Importing Custom DataMorphers
 
 To use your custom implementations, ensure you import both the base `datamorphers` and your custom module:
 
 ```python
 from datamorphers import datamorphers
-import custom_datamorphers  # Import custom transformations
+import custom_datamorphers
 ```
 
 The pipeline will first check for the specified DataMorpher in `custom_datamorphers`. If it's not found, it will fall back to the default ones in `datamorphers`. This allows for seamless extension without modifying the base package.
 
 ---
 
-## 3. Running the Pipeline with Custom DataMorphers
+### Running the Pipeline with Custom DataMorphers
 
 When defining a pipeline configuration (e.g., in a YAML file), simply reference your custom DataMorpher as you would with a base one:
 
 ```yaml
 custom_pipeline:
-  MultiplyColumnByValue:
-    column_name: "price"
+  CustomTransformer:
+    column_name: price
     value: 1.2
-    output_column: "adjusted_price"
 ```
 
 Then, execute the pipeline as usual:
