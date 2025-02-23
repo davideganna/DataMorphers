@@ -31,6 +31,8 @@ def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict={}):
     #   their specific transformations.
     try:
         custom_datamorphers = importlib.import_module("custom_datamorphers")
+        logger.info("Successfully imported module custom_datamorphers.")
+        print(f"custom_datamorphers module: {custom_datamorphers}")  # Debugging line
     except ModuleNotFoundError:
         logger.info("Module custom_datamorphers not found. Custom DataMorphers implementations will not be loaded.")
         custom_datamorphers = None
