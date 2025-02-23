@@ -53,8 +53,6 @@ def test_pipeline():
     config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name='pipeline_food')
 
     df = generate_mock_df()
-    print('\n')
-    print(df.to_markdown(index=False))
     df = run_pipeline(df, config=config)
 
     res_df = pd.DataFrame(
@@ -66,7 +64,5 @@ def test_pipeline():
             'discounted_price': {0: 2.7, 2: 2.5, 3: 2.64, 4: 15.0}
         }
     )
-    print('\n')
-    print(df.to_markdown(index=False))
 
     assert df.equals(res_df)
