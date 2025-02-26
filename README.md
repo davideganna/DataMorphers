@@ -113,7 +113,7 @@ pipeline_food:
 Running the pipeline is very simple:
 
 ```python
-from datamorphers.pipeline import get_pipeline_config, run_pipeline
+from datamorphers.pipeline_loader import get_pipeline_config, run_pipeline
 
 # Load YAML config
 config = get_pipeline_config("config.yaml", pipeline_name='pipeline_food'))
