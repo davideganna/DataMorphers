@@ -179,7 +179,7 @@ When defining a pipeline configuration (e.g., in a YAML file), simply reference 
 custom_pipeline:
   CustomTransformer:
     column_name: price
-    value: 1.2
+    value: 1.3
 ```
 
 Then, execute the pipeline as usual:
