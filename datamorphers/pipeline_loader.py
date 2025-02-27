@@ -6,7 +6,7 @@ import pandas as pd
 from typing import Any
 from datamorphers.base import DataMorpher
 
-logger = logging.Logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def get_pipeline_config(yaml_path: str, pipeline_name: str) -> dict:
@@ -40,6 +40,8 @@ def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict = {}):
 
     # Define the single DataMorpher inside a list of DataMorphers
     _dm: dict
+
+    print(config[f"{config['pipeline_name']}"])
 
     for _dm in config[f"{config['pipeline_name']}"]:
         for cls, args in _dm.items():
