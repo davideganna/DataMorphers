@@ -5,6 +5,7 @@ from datamorphers.base import DataMorpher
 
 class AddColumn(DataMorpher):
     def __init__(self, column_name: str, value: Any):
+        super().__init__()
         self.column_name = column_name
         self.value = value
 
@@ -19,6 +20,7 @@ class ColumnsOperator(DataMorpher):
         self, first_column: str, second_column: str, logic: str, output_column: str
     ):
         """Logic can be sum, sub, mul, div."""
+        super().__init__()
         self.first_column = first_column
         self.second_column = second_column
         self.logic = logic
@@ -43,6 +45,7 @@ class ColumnsOperator(DataMorpher):
 
 class DropNA(DataMorpher):
     def __init__(self, column_name: str):
+        super().__init__()
         self.column_name = column_name
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -53,6 +56,7 @@ class DropNA(DataMorpher):
 
 class FillNA(DataMorpher):
     def __init__(self, column_name: str, value: Any):
+        super().__init__()
         self.column_name = column_name
         self.value = value
 
@@ -65,6 +69,7 @@ class FillNA(DataMorpher):
 class FilterRows(DataMorpher):
     def __init__(self, *, first_column: str, second_column: str, logic: str):
         """Logic can be e, g, l, ge, le."""
+        super().__init__()
         self.first_column = first_column
         self.second_column = second_column
         self.logic = logic
@@ -87,6 +92,7 @@ class FilterRows(DataMorpher):
 class MathOperator(DataMorpher):
     def __init__(self, column_name: str, logic: str, value: float, output_column: str):
         """Logic can be sum, sub, mul, div."""
+        super().__init__()
         self.column_name = column_name
         self.logic = logic
         self.value = value
@@ -109,6 +115,7 @@ class MergeDataFrames(DataMorpher):
     def __init__(
         self, df_to_join: pd.DataFrame, join_cols: list, how: str, suffixes: list
     ):
+        super().__init__()
         self.df_to_join = df_to_join
         self.join_cols = join_cols
         self.how = how
@@ -133,6 +140,7 @@ class MergeDataFrames(DataMorpher):
 
 class NormalizeColumn(DataMorpher):
     def __init__(self, column_name: str, output_column: str):
+        super().__init__()
         self.column_name = column_name
         self.output_column = output_column
 
@@ -146,6 +154,7 @@ class NormalizeColumn(DataMorpher):
 
 class RemoveColumns(DataMorpher):
     def __init__(self, columns_name: list | str):
+        super().__init__()
         self.columns_name = (
             columns_name if type(columns_name) is list else [columns_name]
         )
@@ -158,6 +167,7 @@ class RemoveColumns(DataMorpher):
 
 class RenameColumn(DataMorpher):
     def __init__(self, old_column_name: str, new_column_name: str):
+        super().__init__()
         self.old_column_name = old_column_name
         self.new_column_name = new_column_name
 
