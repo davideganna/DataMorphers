@@ -20,5 +20,3 @@ setup(
     packages=find_packages(),
     install_requires=requirements,
 )
-
-subprocess.run([sys.executable, "-m", "pip", "install", "-e", "."], check=True)
