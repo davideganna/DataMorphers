@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 class DataMorpher(ABC):
     def __init__(self):
-        logger.info(f"Instantiated: {self.__class__.__name__}")
+        pass
 
     @staticmethod
     def _handle_args(args: dict, extra_dfs: dict = None):

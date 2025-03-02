@@ -16,6 +16,16 @@ def get_pipeline_config(yaml_path: str, pipeline_name: str) -> dict:
     return config
 
 
+def log_pipeline_config(config: dict):
+    logger.info("Loading the following pipeline:")
+    _dm: dict
+    for _dm in config[f"{config['pipeline_name']}"]:
+        for cls, args in _dm.items():
+            logger.info(f"*** DataMorpher ***: {cls} ")
+            for arg, value in args.items():
+                logger.info(f"  {arg}: {value}")
+
+
 def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict = {}):
     """
     Runs the pipeline transformations sequentially.
@@ -27,6 +37,7 @@ def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict = {}):
 
     :returns: Transformed DataFrame.
     """
+
     # Try to install custom_datamorphers, a module where the user can define
     #   their specific transformations.
     try:
@@ -34,14 +45,15 @@ def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict = {}):
         logger.info("Successfully imported module custom_datamorphers.")
     except ModuleNotFoundError:
         logger.info(
-            "Module custom_datamorphers not found. Custom DataMorphers implementations will not be loaded."
+            "Module custom_datamorphers not found. Custom DataMorphers implementations will not be loaded.\n"
         )
         custom_datamorphers = None
 
+    # Display pipeline configuration
+    log_pipeline_config(config)
+
     # Define the single DataMorpher inside a list of DataMorphers
     _dm: dict
-
-    print(config[f"{config['pipeline_name']}"])
 
     for _dm in config[f"{config['pipeline_name']}"]:
         for cls, args in _dm.items():
