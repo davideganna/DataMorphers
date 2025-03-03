@@ -212,3 +212,37 @@ def test_rename_column():
 
     assert "A" not in df.columns
     assert "RenamedColumn" in df.columns
+
+
+def test_save_dataframe():
+    """
+    - SaveDataFrame:
+        file_name: saved_df
+    """
+    import os.path
+
+    config = get_pipeline_config(
+        yaml_path=YAML_PATH, pipeline_name="pipeline_SaveDataFrame"
+    )
+
+    df = generate_mock_df()
+    df = run_pipeline(df, config=config)
+
+    assert os.path.isfile("saved_df.pkl")
+
+
+def test_delete_dataframe():
+    """
+    - DeleteDataFrame:
+        file_name: saved_df
+    """
+    import os
+
+    config = get_pipeline_config(
+        yaml_path=YAML_PATH, pipeline_name="pipeline_DeleteDataFrame"
+    )
+
+    df = generate_mock_df()
+    df = run_pipeline(df, config=config)
+
+    assert "saved_df.pkl" not in os.listdir()

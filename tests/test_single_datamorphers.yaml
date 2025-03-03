@@ -68,3 +68,11 @@ pipeline_RenameColumn:
   - RenameColumn:
       old_column_name: A
       new_column_name: RenamedColumn
+
+pipeline_SaveDataFrame:
+  - SaveDataFrame:
+      file_name: saved_df
+
+pipeline_DeleteDataFrame:
+  - DeleteDataFrame:
+      file_name: saved_df
