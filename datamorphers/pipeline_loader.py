@@ -21,9 +21,9 @@ def log_pipeline_config(config: dict):
     _dm: dict
     for _dm in config[f"{config['pipeline_name']}"]:
         for cls, args in _dm.items():
-            logger.info(f"*** DataMorpher ***: {cls} ")
+            logger.info(f"*** DataMorpher: {cls} ***")
             for arg, value in args.items():
-                logger.info(f"  {arg}: {value}")
+                logger.info(f"{4*' '}{arg}: {value}")
 
 
 def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict = {}):

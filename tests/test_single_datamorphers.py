@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from datamorphers.pipeline_loader import get_pipeline_config, run_pipeline
 
-YAML_PATH = "tests/test_single_datamorphers.yaml"
+YAML_PATH = "tests/pipelines/test_single_datamorphers.yaml"
 
 
 def generate_mock_df():

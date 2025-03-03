@@ -197,6 +197,11 @@ class SaveDataFrame(DataMorpher):
         self.file_name = file_name
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Saves a DataFrame using pickle."""
+        """
+        Saves a DataFrame using pickle.
+
+        If you wish to later remove the pickle file, call 'DeleteDataFrame'
+            at the end of the pipeline.
+        """
         df.to_pickle(f"{self.file_name}.pkl")
         return df
