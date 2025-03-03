@@ -1,6 +1,3 @@
-# pip uninstall datamorphers -y
-# pip install -e .
-
 import subprocess
 import sys
 from setuptools import setup, find_packages

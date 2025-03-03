@@ -43,6 +43,20 @@ class ColumnsOperator(DataMorpher):
         return df
 
 
+class DeleteDataFrame(DataMorpher):
+    def __init__(self, file_name: str):
+        super().__init__()
+        self.file_name = file_name
+
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Deletes a DataFrame previously saved using pickle."""
+        import os.path
+
+        if os.path.isfile(f"{self.file_name}.pkl"):
+            os.remove(f"{self.file_name}.pkl")
+        return df
+
+
 class DropNA(DataMorpher):
     def __init__(self, column_name: str):
         super().__init__()
@@ -174,4 +188,15 @@ class RenameColumn(DataMorpher):
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """Renames a column in the dataframe."""
         df = df.rename(columns={self.old_column_name: self.new_column_name})
+        return df
+
+
+class SaveDataFrame(DataMorpher):
+    def __init__(self, file_name: str):
+        super().__init__()
+        self.file_name = file_name
+
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Saves a DataFrame using pickle."""
+        df.to_pickle(f"{self.file_name}.pkl")
         return df
