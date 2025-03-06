@@ -4,7 +4,7 @@
 ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)
 
 
-## Overview 
+## Overview
 
 DataMorph is a Python library that provides a flexible framework for transforming Pandas DataFrames using a modular pipeline approach. Transformations are defined in a YAML configuration, and are applied sequentially to your dataset.
 
