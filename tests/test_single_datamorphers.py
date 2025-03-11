@@ -35,6 +35,25 @@ def test_add_column():
     assert df["D"].unique()[0] == 999
 
 
+def test_cast_columns_type():
+    """
+    pipeline_CastColumnTypes:
+        - CastColumnTypes:
+            cast_dict:
+                A: float16
+                C: str
+    """
+    config = get_pipeline_config(
+        yaml_path=YAML_PATH, pipeline_name="pipeline_CastColumnTypes"
+    )
+
+    df = generate_mock_df()
+    df = run_pipeline(df, config=config)
+
+    assert isinstance(df["A"].dtype, type(np.dtype("float16")))
+    assert isinstance(df["C"].dtype, type(np.dtype("object")))
+
+
 def test_columns_operator():
     """
     - ColumnsOperator:

@@ -3,6 +3,12 @@ pipeline_AddColumn:
       column_name: D
       value: 999
 
+pipeline_CastColumnTypes:
+  - CastColumnTypes:
+      cast_dict:
+        A: float16
+        C: str
+
 pipeline_ColumnsOperator:
   - ColumnsOperator:
       first_column: A

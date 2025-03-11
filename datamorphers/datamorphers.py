@@ -9,9 +9,20 @@ class AddColumn(DataMorpher):
         self.column_name = column_name
         self.value = value
 
-    def _datamorph(self, df):
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """Adds a new column with a constant value to the dataframe."""
         df[self.column_name] = self.value
+        return df
+
+
+class CastColumnTypes(DataMorpher):
+    def __init__(self, cast_dict: dict):
+        super().__init__()
+        self.cast_dict = cast_dict
+
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Casts columns in the DataFrame to specific column types."""
+        df = df.astype(self.cast_dict)
         return df
 
 
@@ -112,7 +123,7 @@ class MathOperator(DataMorpher):
         self.value = value
         self.output_column = output_column
 
-    def _datamorph(self, df):
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """Math operation between a column and a value, with the operation defined in logic."""
         if self.logic == "sum":
             df[self.output_column] = df[self.column_name] + self.value
