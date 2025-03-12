@@ -10,6 +10,16 @@ logger = logging.getLogger(__name__)
 
 
 def get_pipeline_config(yaml_path: str, pipeline_name: str) -> dict:
+    """
+    Loads the pipeline configuration from a YAML file.
+
+    Args:
+        yaml_path (str): The path to the YAML configuration file.
+        pipeline_name (str): The name of the pipeline to load.
+
+    Returns:
+        dict: The pipeline configuration dictionary.
+    """
     with open(yaml_path, "r") as yaml_config:
         config = yaml.safe_load(yaml_config)
     config["pipeline_name"] = pipeline_name
@@ -17,6 +27,12 @@ def get_pipeline_config(yaml_path: str, pipeline_name: str) -> dict:
 
 
 def log_pipeline_config(config: dict):
+    """
+    Logs the pipeline configuration.
+
+    Args:
+        config (dict): The pipeline configuration dictionary.
+    """
     logger.info("Loading the following pipeline:")
     _dm: dict
     for _dm in config[f"{config['pipeline_name']}"]:
@@ -28,16 +44,16 @@ def log_pipeline_config(config: dict):
 
 def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict = {}):
     """
-    Runs the pipeline transformations sequentially.
+    Runs the pipeline on the DataFrame.
 
-    :param df: The main DataFrame to be transformed.
-    :param config: The pipeline configuration dictionary.
-    :param extra_dfs: A dictionary containing additional DataFrames
-        required by certain DataMorphers.
+    Args:
+        df (pd.DataFrame): The input DataFrame to be transformed.
+        config (Any): The pipeline configuration.
+        extra_dfs (dict, optional): Additional DataFrames required by some DataMorphers. Defaults to {}.
 
-    :returns: Transformed DataFrame.
+    Returns:
+        pd.DataFrame: The transformed DataFrame.
     """
-
     # Try to install custom_datamorphers, a module where the user can define
     #   their specific transformations.
     try:
