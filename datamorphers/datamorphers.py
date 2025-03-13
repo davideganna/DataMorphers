@@ -202,19 +202,6 @@ class RenameColumn(DataMorpher):
         return df
 
 
-class SelectColumns(DataMorpher):
-    def __init__(self, columns_name: list | str):
-        super().__init__()
-        self.columns_name = self.columns_name = (
-            columns_name if type(columns_name) is list else [columns_name]
-        )
-
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Selects columns from the DataFrame."""
-        df = df[self.columns_name]
-        return df
-
-
 class SaveDataFrame(DataMorpher):
     def __init__(self, file_name: str):
         super().__init__()
@@ -228,4 +215,17 @@ class SaveDataFrame(DataMorpher):
             at the end of the pipeline.
         """
         df.to_pickle(f"{self.file_name}.pkl")
+        return df
+
+
+class SelectColumns(DataMorpher):
+    def __init__(self, columns_name: list | str):
+        super().__init__()
+        self.columns_name = self.columns_name = (
+            columns_name if type(columns_name) is list else [columns_name]
+        )
+
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Selects columns from the DataFrame."""
+        df = df[self.columns_name]
         return df
