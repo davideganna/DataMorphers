@@ -1,9 +1,8 @@
 import yaml
-import importlib
 import pandas as pd
 import datamorphers.datamorphers as datamorphers
 from datamorphers.base import DataMorpher
-from datamorphers import logger
+from datamorphers import logger, custom_datamorphers
 from typing import Any
 
 
@@ -60,16 +59,6 @@ def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict = {}):
     Returns:
         pd.DataFrame: The transformed DataFrame.
     """
-    # Try to install custom_datamorphers, a module where the user can define
-    #   their specific transformations.
-    try:
-        custom_datamorphers = importlib.import_module("custom_datamorphers")
-        logger.info("Successfully imported module custom_datamorphers.")
-    except ModuleNotFoundError:
-        logger.info(
-            "Module custom_datamorphers not found. Custom DataMorphers implementations will not be loaded.\n"
-        )
-        custom_datamorphers = None
 
     # Display pipeline configuration
     log_pipeline_config(config)

@@ -2,8 +2,6 @@ import pandas as pd
 import logging
 from abc import ABC, abstractmethod
 
-logger = logging.getLogger(__name__)
-
 
 class DataMorpher(ABC):
     def __init__(self):
