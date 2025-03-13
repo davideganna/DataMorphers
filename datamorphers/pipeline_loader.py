@@ -1,17 +1,10 @@
 import yaml
-import logging
-import datamorphers.datamorphers as datamorphers
 import importlib
 import pandas as pd
-from typing import Any
+import datamorphers.datamorphers as datamorphers
 from datamorphers.base import DataMorpher
-
-logging.basicConfig(
-    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s", force=True
-)
-logger = logging.getLogger(__name__)
-
-print(logging.getLogger().handlers)  # See if handlers exist
+from datamorphers import logger
+from typing import Any
 
 
 def get_pipeline_config(yaml_path: str, pipeline_name: str) -> dict:
@@ -38,7 +31,7 @@ def log_pipeline_config(config: dict):
     Args:
         config (dict): The pipeline configuration dictionary.
     """
-    logger.info("Loading the following pipeline:")
+    logger.info(f"Loading pipeline named: {config['pipeline_name']}")
     _dm: dict | str
     for _dm in config[f"{config['pipeline_name']}"]:
         if isinstance(_dm, dict):

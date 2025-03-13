@@ -7,8 +7,9 @@ from datamorphers.pipeline_loader import get_pipeline_config, run_pipeline
 import logging
 
 logging.basicConfig(
-    level=logging.WARNING,
+    level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
     force=True,
 )
 
