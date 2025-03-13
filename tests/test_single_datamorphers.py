@@ -95,7 +95,7 @@ def test_dropna():
     assert np.nan not in df["B"]
 
 
-def test_FillNA():
+def test_fillna():
     """
     - FillNA:
         column_name: B
@@ -196,7 +196,7 @@ def test_normalize_column():
 
 def test_remove_columns():
     """
-      - RemoveColumns:
+    - RemoveColumns:
         columns_name: A
     - RemoveColumns:
         columns_name: [
@@ -250,6 +250,24 @@ def test_save_dataframe():
     assert os.path.isfile("saved_df.pkl")
 
 
+def test_select_columns():
+    """
+    - SelectColumns:
+        columns: [A, B]
+    """
+    config = get_pipeline_config(
+        yaml_path=YAML_PATH, pipeline_name="pipeline_SelectColumns"
+    )
+
+    df = generate_mock_df()
+    df = run_pipeline(df, config=config)
+
+    assert "A" in df.columns
+    assert "B" in df.columns
+    assert "C" not in df.columns
+
+
+# Keep it last: deletes a DataFrame saved using 'SaveDataFrame'
 def test_delete_dataframe():
     """
     - DeleteDataFrame:

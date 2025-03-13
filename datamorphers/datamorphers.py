@@ -186,7 +186,7 @@ class RemoveColumns(DataMorpher):
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """Removes a specified column from the DataFrame."""
-        df = df.drop(columns=self.columns_name, errors="ignore")
+        df = df.drop(columns=self.columns_name)
         return df
 
 
@@ -199,6 +199,19 @@ class RenameColumn(DataMorpher):
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """Renames a column in the dataframe."""
         df = df.rename(columns={self.old_column_name: self.new_column_name})
+        return df
+
+
+class SelectColumns(DataMorpher):
+    def __init__(self, columns_name: list | str):
+        super().__init__()
+        self.columns_name = self.columns_name = (
+            columns_name if type(columns_name) is list else [columns_name]
+        )
+
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Selects columns from the DataFrame."""
+        df = df[self.columns_name]
         return df
 
 

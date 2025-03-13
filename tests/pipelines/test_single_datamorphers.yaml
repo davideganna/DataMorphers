@@ -53,9 +53,9 @@ pipeline_MathOperator:
 pipeline_MergeDataFrames:
   - MergeDataFrames:
       df_to_join: df_2
-      join_cols: ['A', 'B']
+      join_cols: [A, B]
       how: inner
-      suffixes: ['_1', '_2']
+      suffixes: [_1, _2]
 
 pipeline_NormalizeColumn:
   - NormalizeColumn:
@@ -78,6 +78,12 @@ pipeline_RenameColumn:
 pipeline_SaveDataFrame:
   - SaveDataFrame:
       file_name: saved_df
+
+pipeline_SelectColumns:
+  - SelectColumns:
+      columns_name:
+        - A
+        - B
 
 pipeline_DeleteDataFrame:
   - DeleteDataFrame:
