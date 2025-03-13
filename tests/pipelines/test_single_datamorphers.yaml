@@ -1,5 +1,5 @@
-pipeline_AddColumn:
-  - AddColumn:
+pipeline_CreateColumn:
+  - CreateColumn:
       column_name: D
       value: 999
 

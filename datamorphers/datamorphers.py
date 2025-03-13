@@ -3,7 +3,7 @@ from typing import Any
 from datamorphers.base import DataMorpher
 
 
-class AddColumn(DataMorpher):
+class CreateColumn(DataMorpher):
     def __init__(self, column_name: str, value: Any):
         super().__init__()
         self.column_name = column_name

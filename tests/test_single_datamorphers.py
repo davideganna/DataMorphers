@@ -18,14 +18,14 @@ def generate_mock_df():
     return df
 
 
-def test_add_column():
+def test_create_column():
     """
-    - AddColumn:
+    - CreateColumn:
         column_name: D
         value: 999
     """
     config = get_pipeline_config(
-        yaml_path=YAML_PATH, pipeline_name="pipeline_AddColumn"
+        yaml_path=YAML_PATH, pipeline_name="pipeline_CreateColumn"
     )
 
     df = generate_mock_df()

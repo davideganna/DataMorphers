@@ -15,7 +15,7 @@ By leveraging DataMorph, your pipelines become cleaner, more scalable and easier
 - Modular and extensible transformation framework.
 - Easily configurable via YAML files.
 - Supports multiple transformations, including:
-  - **AddColumn**: Adds a new column with a constant value.
+  - **CreateColumn**: Creates a new column with a constant value.
   - **ColumnsOperator**: Performs a math operation on two columns and stores the result in a new column.
   - **NormalizeColumn**: Applies Z-score normalization.
   - **RemoveColumns**: Drops specified columns.
@@ -77,7 +77,7 @@ To do so, we create a YAML file specifying a pipeline of transformations, named 
 
 ```yaml
 pipeline_food:
-  - AddColumn:
+  - CreateColumn:
       column_name: food_marker
       value: food
 

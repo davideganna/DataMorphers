@@ -21,7 +21,7 @@ def generate_mock_df():
 
 def test_pipeline():
     """
-    - AddColumn:
+    - CreateColumn:
         column_name: food_marker
         value: food
 
