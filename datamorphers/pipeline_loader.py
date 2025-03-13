@@ -6,7 +6,12 @@ import pandas as pd
 from typing import Any
 from datamorphers.base import DataMorpher
 
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s", force=True
+)
 logger = logging.getLogger(__name__)
+
+print(logging.getLogger().handlers)  # See if handlers exist
 
 
 def get_pipeline_config(yaml_path: str, pipeline_name: str) -> dict:
@@ -37,7 +42,7 @@ def log_pipeline_config(config: dict):
     _dm: dict | str
     for _dm in config[f"{config['pipeline_name']}"]:
         if isinstance(_dm, dict):
-            cls, args = _dm.items()
+            cls, args = list(_dm.items())[0]
 
         elif isinstance(_dm, str):
             cls, args = _dm, {}
@@ -45,10 +50,9 @@ def log_pipeline_config(config: dict):
         else:
             raise ValueError(f"Invalid DataMorpher format: {_dm}")
 
-        for cls, args in _dm.items():
-            logger.info(f"*** DataMorpher: {cls} ***")
-            for arg, value in args.items():
-                logger.info(f"{4*' '}{arg}: {value}")
+        logger.info(f"*** DataMorpher: {cls} ***")
+        for arg, value in args.items():
+            logger.info(f"{4*' '}{arg}: {value}")
 
 
 def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict = {}):
@@ -82,7 +86,7 @@ def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict = {}):
 
     for _dm in config[f"{config['pipeline_name']}"]:
         if isinstance(_dm, dict):
-            cls, args = _dm.items()
+            cls, args = list(_dm.items())[0]
 
         elif isinstance(_dm, str):
             cls, args = _dm, {}

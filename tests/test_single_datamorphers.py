@@ -4,6 +4,16 @@ import pandas as pd
 import numpy as np
 from datamorphers.pipeline_loader import get_pipeline_config, run_pipeline
 
+import logging
+
+logging.basicConfig(
+    level=logging.WARNING,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    force=True,
+)
+
+logger = logging.getLogger(__name__)
+
 YAML_PATH = "tests/pipelines/test_single_datamorphers.yaml"
 
 
@@ -127,6 +137,26 @@ def test_filter_rows():
     res = df.loc[df["A"] <= df["B"]]
 
     assert df.equals(res)
+
+
+def test_flat_multi_index():
+    """
+    - FlatMultiIndex:
+    """
+    config = get_pipeline_config(
+        yaml_path=YAML_PATH, pipeline_name="pipeline_FlatMultiIndex"
+    )
+
+    df = pd.DataFrame(
+        {
+            ("A", "B"): [1, 2, 3],
+            ("C", "D"): [4, 5, 6],
+            "E": [7, 8, 9],
+        }
+    )
+    df = run_pipeline(df, config=config)
+
+    assert df.columns.equals(pd.Index(["A_B", "C_D", "E"]))
 
 
 def test_math_operator():

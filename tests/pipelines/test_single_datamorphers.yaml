@@ -37,6 +37,9 @@ pipeline_FilterRows:
       second_column: B
       logic: le
 
+pipeline_FlatMultiIndex:
+  - FlatMultiIndex
+
 pipeline_MathOperator:
   - MathOperator:
       column_name: A

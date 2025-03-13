@@ -114,6 +114,26 @@ class FilterRows(DataMorpher):
         return df
 
 
+class FlatMultiIndex(DataMorpher):
+    def __init__(self):
+        super().__init__()
+
+    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Flattens the multi-index columns, leaving intact single index columns.
+        After being flattened, the columns will be joined by an underscore.
+
+        Example:
+            Before:
+                MultiIndex([('A', 'B'), ('C', 'D'), 'E']
+            After:
+                Index(['A_B', 'C_D', 'E']
+        """
+        df.columns = df.columns.to_flat_index()
+        df.columns = df.columns.map("_".join)
+        return df
+
+
 class MathOperator(DataMorpher):
     def __init__(self, column_name: str, logic: str, value: float, output_column: str):
         """Logic can be sum, sub, mul, div."""
