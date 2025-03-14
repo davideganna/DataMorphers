@@ -104,6 +104,9 @@ def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict = {}):
             # Transform the DataFrame.
             df = datamorpher._datamorph(df)
 
+            # Log the shape of the DataFrame after each transformation
+            logger.debug(f"DataFrame shape after {cls}: {df.shape}")
+
         except Exception as exc:
             logger.error(f"Error in {cls}: {exc}")
 
