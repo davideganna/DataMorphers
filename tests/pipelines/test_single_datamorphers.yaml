@@ -1,7 +1,7 @@
 pipeline_CreateColumn:
   - CreateColumn:
-      column_name: D
-      value: 999
+      column_name: ${custom_column_name}
+      value: ${custom_value}
 
 pipeline_CastColumnTypes:
   - CastColumnTypes:

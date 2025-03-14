@@ -29,21 +29,31 @@ def generate_mock_df():
     return df
 
 
-def test_create_column():
+def test_create_dynamic_column():
     """
+    Creates a column with a dynamic name and value.
+
     - CreateColumn:
-        column_name: D
-        value: 999
+        column_name: ${custom_column_name}
+        value: ${custom_value}
     """
+    df = generate_mock_df()
+
+    custom_column_name = "D"
+    custom_value = 888
+
+    kwargs = {"custom_column_name": custom_column_name, "custom_value": custom_value}
+
     config = get_pipeline_config(
-        yaml_path=YAML_PATH, pipeline_name="pipeline_CreateColumn"
+        yaml_path=YAML_PATH,
+        pipeline_name="pipeline_CreateColumn",
+        **kwargs,
     )
 
-    df = generate_mock_df()
     df = run_pipeline(df, config=config)
 
     assert "D" in df.columns
-    assert df["D"].unique()[0] == 999
+    assert df["D"].unique()[0] == 888
 
 
 def test_cast_columns_type():

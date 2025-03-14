@@ -6,20 +6,28 @@ from datamorphers import logger, custom_datamorphers
 from typing import Any
 
 
-def get_pipeline_config(yaml_path: str, pipeline_name: str) -> dict:
+def get_pipeline_config(yaml_path: str, pipeline_name: str, **kwargs: dict) -> dict:
     """
     Loads the pipeline configuration from a YAML file.
 
     Args:
         yaml_path (str): The path to the YAML configuration file.
         pipeline_name (str): The name of the pipeline to load.
+        kwargs (dict): Additional arguments to be evaluated at runtime.
 
     Returns:
         dict: The pipeline configuration dictionary.
     """
     with open(yaml_path, "r") as yaml_config:
-        config = yaml.safe_load(yaml_config)
+        yaml_content = yaml_config.read()
+
+    # Add runtime evaluation of variables
+    for k, v in kwargs.items():
+        yaml_content = yaml_content.replace(f"${{{k}}}", str(v))
+
+    config = yaml.safe_load(yaml_content)
     config["pipeline_name"] = pipeline_name
+
     return config
 
 
