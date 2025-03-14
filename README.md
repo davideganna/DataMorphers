@@ -134,7 +134,7 @@ print(transformed_df)
 
 ## Extending `datamorphers` with Custom Implementations
 
-The `datamorphers` package allows you to define custom transformations by implementing your own DataMorphers. These custom implementations extend the base ones and can be used seamlessly within the pipeline.
+The `datamorphers` package allows you to define custom transformations by implementing your own DataMorphers. These user-defined implementations extend the base ones and can be used seamlessly within the pipeline.
 
 ### Creating a Custom DataMorpher
 
@@ -142,7 +142,7 @@ To define a custom transformation, create a `custom_datamorphers.py` file in you
 
 ```python
 import pandas as pd
-from datamorphers.datamorphers import DataMorpher
+from datamorphers.base import DataMorpher
 
 class CustomTransformer(DataMorpher):
     def __init__(self, column_name: str, value: float):
@@ -160,12 +160,7 @@ class CustomTransformer(DataMorpher):
 
 ### Importing Custom DataMorphers
 
-To use your custom implementations, ensure you import both the base `datamorphers` and your custom module:
-
-```python
-from datamorphers import datamorphers
-import custom_datamorphers
-```
+To use your custom implementations, create a file named `custom_datamorphers.py` inside your current directory.
 
 The pipeline will first check for the specified DataMorpher in `custom_datamorphers`. If it's not found, it will fall back to the default ones in `datamorphers`. This allows for seamless extension without modifying the base package.
 
@@ -188,7 +183,7 @@ Then, execute the pipeline as usual:
 df_transformed = run_pipeline(df, config)
 ```
 
-If a custom module is provided, your custom transformations will be used instead of or in addition to the built-in ones.
+If a custom module is provided, your custom transformations will be used instead of (or in addition to) the built-in ones.
 
 ---
 

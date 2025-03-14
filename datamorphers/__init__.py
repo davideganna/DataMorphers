@@ -19,7 +19,7 @@ def initialize_logger():
             datefmt="%Y-%m-%d %H:%M:%S",
             force=True,
         )
-    logger.debug("DataMorphers logging initialized!")
+    logger.debug("DataMorphers logging initialized.")
     return logger
 
 

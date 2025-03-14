@@ -55,16 +55,20 @@ class ColumnsOperator(DataMorpher):
 
 
 class DeleteDataFrame(DataMorpher):
-    def __init__(self, file_name: str):
+    def __init__(self, file_name: list | str):
         super().__init__()
-        self.file_name = file_name
+        self.file_name = file_name if type(file_name) is list else [file_name]
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Deletes a DataFrame previously saved using pickle."""
+        """
+        Deletes a DataFrame (or a list of DataFrames) previously saved using pickle.
+        """
         import os.path
 
-        if os.path.isfile(f"{self.file_name}.pkl"):
-            os.remove(f"{self.file_name}.pkl")
+        for file in self.file_name:
+            if os.path.isfile(f"{file}.pkl"):
+                os.remove(f"{file}.pkl")
+
         return df
 
 
@@ -241,7 +245,7 @@ class SaveDataFrame(DataMorpher):
 class SelectColumns(DataMorpher):
     def __init__(self, columns_name: list | str):
         super().__init__()
-        self.columns_name = self.columns_name = (
+        self.columns_name = (
             columns_name if type(columns_name) is list else [columns_name]
         )
 
