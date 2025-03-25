@@ -132,7 +132,40 @@ print(transformed_df)
 
 ---
 
-## Extending `datamorphers` with Custom Implementations
+# Define runtime values in the YAML configuration
+
+DataMorph is flexible, since it can work with variables at runtime:
+
+```yaml
+pipeline_runtime:
+  - CreateColumn:
+      column_name: ${custom_column_name}
+      value: ${custom_value}
+```
+
+Simply pass the arguments you need when you instantiate the pipeline:
+
+```python
+custom_column_name = "D"
+custom_value = 888
+
+kwargs = {
+  "custom_column_name": custom_column_name,
+  "custom_value": custom_value
+}
+
+config = get_pipeline_config(
+    yaml_path=YAML_PATH,
+    pipeline_name="pipeline_runtime",
+    **kwargs,
+)
+
+df = run_pipeline(df, config=config)
+```
+
+---
+
+# Extending `datamorphers` with Custom Implementations
 
 The `datamorphers` package allows you to define custom transformations by implementing your own DataMorphers. These user-defined implementations extend the base ones and can be used seamlessly within the pipeline.
 
