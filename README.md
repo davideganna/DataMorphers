@@ -183,9 +183,10 @@ class CustomTransformer(DataMorpher):
         self.value = value
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
-
-        Implement your custom transformations here!
-
+        """
+        Implement your custom transformation here!
+        """
+        df[self.column_name] = self.value * 3.14
         return df
 ```
 
