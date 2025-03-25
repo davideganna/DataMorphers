@@ -132,7 +132,7 @@ print(transformed_df)
 
 ---
 
-# Define runtime values in the YAML configuration
+## Define runtime values in the YAML configuration
 
 DataMorph is flexible, since it can work with variables at runtime:
 
@@ -165,7 +165,7 @@ df = run_pipeline(df, config=config)
 
 ---
 
-# Extending `datamorphers` with Custom Implementations
+## Extending `datamorphers` with Custom Implementations
 
 The `datamorphers` package allows you to define custom transformations by implementing your own DataMorphers. These user-defined implementations extend the base ones and can be used seamlessly within the pipeline.
 
@@ -189,15 +189,12 @@ class CustomTransformer(DataMorpher):
         return df
 ```
 
----
-
 ### Importing Custom DataMorphers
 
 To use your custom implementations, create a file named `custom_datamorphers.py` inside your current directory.
 
 The pipeline will first check for the specified DataMorpher in `custom_datamorphers`. If it's not found, it will fall back to the default ones in `datamorphers`. This allows for seamless extension without modifying the base package.
 
----
 
 ### Running the Pipeline with Custom DataMorphers
 
