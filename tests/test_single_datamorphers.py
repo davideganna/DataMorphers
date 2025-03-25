@@ -201,18 +201,20 @@ def test_math_operator():
 def test_merge_dataframes():
     """
     - MergeDataFrames:
-        df_to_join: df_2
+        df_to_join: ${second_df}
         join_cols: ['A', 'B']
         how: inner
         suffixes: ['_1', '_2']
     """
-    config = get_pipeline_config(
-        yaml_path=YAML_PATH, pipeline_name="pipeline_MergeDataFrames"
-    )
-
     df = generate_mock_df()
     second_df = generate_mock_df()
-    df = run_pipeline(df, config=config, extra_dfs={"df_2": second_df})
+    kwargs = {"second_df": second_df}
+
+    config = get_pipeline_config(
+        yaml_path=YAML_PATH, pipeline_name="pipeline_MergeDataFrames", **kwargs
+    )
+
+    df = run_pipeline(df, config=config)
 
     assert "C_1" in df.columns
     assert "C_2" in df.columns

@@ -55,7 +55,7 @@ pipeline_MathOperator:
 
 pipeline_MergeDataFrames:
   - MergeDataFrames:
-      df_to_join: df_2
+      df_to_join: ${second_df}
       join_cols: [A, B]
       how: inner
       suffixes: [_1, _2]

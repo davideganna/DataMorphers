@@ -23,6 +23,9 @@ def get_pipeline_config(yaml_path: str, pipeline_name: str, **kwargs: dict) -> d
 
     # Add runtime evaluation of variables
     for k, v in kwargs.items():
+        if isinstance(v, pd.DataFrame):
+            # Serialize the DataFrame, which will be deserialized in the specific DataMorpher.
+            v = v.to_json()
         yaml_content = yaml_content.replace(f"${{{k}}}", str(v))
 
     config = yaml.safe_load(yaml_content)
@@ -55,7 +58,7 @@ def log_pipeline_config(config: dict):
             logger.info(f"{4*' '}{arg}: {value}")
 
 
-def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict = {}):
+def run_pipeline(df: pd.DataFrame, config: Any):
     """
     Runs the pipeline on the DataFrame.
 
@@ -93,10 +96,6 @@ def run_pipeline(df: pd.DataFrame, config: Any, extra_dfs: dict = {}):
 
             # Get the DataMorpher class
             datamorpher_cls: DataMorpher = getattr(module, cls)
-
-            # Should the class require extra DataFrames (e.g., MergeDataFrames DataMorpher),
-            #   the args are handled here.
-            args = datamorpher_cls._handle_args(args, extra_dfs)
 
             # Instantiate the DataMorpher object with the updated args.
             datamorpher: DataMorpher = datamorpher_cls(**args)

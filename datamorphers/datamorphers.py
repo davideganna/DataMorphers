@@ -1,4 +1,5 @@
 import pandas as pd
+import json
 from typing import Any
 from datamorphers.base import DataMorpher
 
@@ -161,19 +162,13 @@ class MathOperator(DataMorpher):
 
 
 class MergeDataFrames(DataMorpher):
-    def __init__(
-        self, df_to_join: pd.DataFrame, join_cols: list, how: str, suffixes: list
-    ):
+    def __init__(self, df_to_join: dict, join_cols: list, how: str, suffixes: list):
         super().__init__()
-        self.df_to_join = df_to_join
+        # Deserialize the DataFrame
+        self.df_to_join = pd.read_json(json.dumps(df_to_join))
         self.join_cols = join_cols
         self.how = how
         self.suffixes = suffixes
-
-    @staticmethod
-    def _handle_args(args: dict, extra_dfs: dict):
-        args["df_to_join"] = extra_dfs[args["df_to_join"]]
-        return args
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """Merges two DataFrames."""
