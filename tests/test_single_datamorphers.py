@@ -78,16 +78,28 @@ def test_cast_columns_type():
 def test_columns_operator():
     """
     - ColumnsOperator:
-        first_column: A
-        second_column: B
-        logic: mul
-        output_column: A_x_B
+      first_column: A
+      second_column: B
+      logic: sum
+      output_column: A_sum_B
 
     - ColumnsOperator:
         first_column: A
         second_column: B
         logic: sub
-        output_column: A_minus_B
+        output_column: A_sub_B
+
+    - ColumnsOperator:
+        first_column: A
+        second_column: B
+        logic: mul
+        output_column: A_mul_B
+
+    - ColumnsOperator:
+        first_column: A
+        second_column: B
+        logic: div
+        output_column: A_div_B
     """
     config = get_pipeline_config(
         yaml_path=YAML_PATH, pipeline_name="pipeline_ColumnsOperator"
@@ -96,11 +108,15 @@ def test_columns_operator():
     df = generate_mock_df()
     df = run_pipeline(df, config=config)
 
-    res_mul = df["A"] * df["B"]
+    res_sum = df["A"] + df["B"]
     res_sub = df["A"] - df["B"]
+    res_mul = df["A"] * df["B"]
+    res_div = df["A"] / df["B"]
 
-    assert (df["A_x_B"]).equals(res_mul)
-    assert (df["A_minus_B"]).equals(res_sub)
+    assert (df["A_sum_B"]).equals(res_sum)
+    assert (df["A_sub_B"]).equals(res_sub)
+    assert (df["A_mul_B"]).equals(res_mul)
+    assert (df["A_div_B"]).equals(res_div)
 
 
 def test_dropna():
@@ -132,22 +148,101 @@ def test_fillna():
 
 
 def test_filter_rows():
-    """
-    - FilterRows:
-        first_column: A
-        second_column: B
-        logic: le
-    """
-    config = get_pipeline_config(
-        yaml_path=YAML_PATH, pipeline_name="pipeline_FilterRows"
-    )
+    def _test_filter_rows_e():
+        """
+        - FilterRows:
+            first_column: A
+            second_column: B
+            logic: e
+        """
+        config = get_pipeline_config(
+            yaml_path=YAML_PATH, pipeline_name="pipeline_FilterRows_e"
+        )
 
-    df = generate_mock_df()
-    df = run_pipeline(df, config=config)
+        df = generate_mock_df()
+        df = run_pipeline(df, config=config)
 
-    res = df.loc[df["A"] <= df["B"]]
+        res = df.loc[df["A"] == df["B"]]
 
-    assert df.equals(res)
+        assert df.equals(res)
+
+    def _test_filter_rows_g():
+        """
+        - FilterRows:
+            first_column: A
+            second_column: B
+            logic: g
+        """
+        config = get_pipeline_config(
+            yaml_path=YAML_PATH, pipeline_name="pipeline_FilterRows_g"
+        )
+
+        df = generate_mock_df()
+        df = run_pipeline(df, config=config)
+
+        res = df.loc[df["A"] > df["B"]]
+
+        assert df.equals(res)
+
+    def _test_filter_rows_ge():
+        """
+        - FilterRows:
+            first_column: A
+            second_column: B
+            logic: ge
+        """
+        config = get_pipeline_config(
+            yaml_path=YAML_PATH, pipeline_name="pipeline_FilterRows_ge"
+        )
+
+        df = generate_mock_df()
+        df = run_pipeline(df, config=config)
+
+        res = df.loc[df["A"] >= df["B"]]
+
+        assert df.equals(res)
+
+    def _test_filter_rows_l():
+        """
+        - FilterRows:
+            first_column: A
+            second_column: B
+            logic: l
+        """
+        config = get_pipeline_config(
+            yaml_path=YAML_PATH, pipeline_name="pipeline_FilterRows_l"
+        )
+
+        df = generate_mock_df()
+        df = run_pipeline(df, config=config)
+
+        res = df.loc[df["A"] < df["B"]]
+
+        assert df.equals(res)
+
+    def _test_filter_rows_le():
+        """
+        - FilterRows:
+            first_column: A
+            second_column: B
+            logic: le
+        """
+        config = get_pipeline_config(
+            yaml_path=YAML_PATH, pipeline_name="pipeline_FilterRows_le"
+        )
+
+        df = generate_mock_df()
+        df = run_pipeline(df, config=config)
+
+        res = df.loc[df["A"] <= df["B"]]
+
+        assert df.equals(res)
+
+    _test_filter_rows_e()
+    _test_filter_rows_g()
+    _test_filter_rows_ge()
+    _test_filter_rows_l()
+    _test_filter_rows_le()
 
 
 def test_flat_multi_index():
@@ -173,16 +268,28 @@ def test_flat_multi_index():
 def test_math_operator():
     """
     - MathOperator:
+      column_name: A
+      logic: sum
+      value: 3
+      output_column: sum_col
+
+    - MathOperator:
+        column_name: A
+        logic: sub
+        value: 3
+        output_column: sub_col
+
+    - MathOperator:
+        column_name: A
+        logic: mul
+        value: 3
+        output_column: mul_col
+
+    - MathOperator:
         column_name: A
         logic: div
         value: 3
         output_column: div_col
-
-    - MathOperator:
-        column_name: A
-        logic: sum
-        value: 3
-        output_column: sum_col
     """
     config = get_pipeline_config(
         yaml_path=YAML_PATH, pipeline_name="pipeline_MathOperator"
@@ -191,11 +298,15 @@ def test_math_operator():
     df = generate_mock_df()
     df = run_pipeline(df, config=config)
 
-    res_div = df["A"] / 3
     res_sum = df["A"] + 3
+    res_sub = df["A"] - 3
+    res_mul = df["A"] * 3
+    res_div = df["A"] / 3
 
-    assert df["div_col"].equals(res_div)
     assert df["sum_col"].equals(res_sum)
+    assert df["sub_col"].equals(res_sub)
+    assert df["mul_col"].equals(res_mul)
+    assert df["div_col"].equals(res_div)
 
 
 def test_merge_dataframes():

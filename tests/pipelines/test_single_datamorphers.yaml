@@ -13,14 +13,26 @@ pipeline_ColumnsOperator:
   - ColumnsOperator:
       first_column: A
       second_column: B
-      logic: mul
-      output_column: A_x_B
+      logic: sum
+      output_column: A_sum_B
 
   - ColumnsOperator:
       first_column: A
       second_column: B
       logic: sub
-      output_column: A_minus_B
+      output_column: A_sub_B
+
+  - ColumnsOperator:
+      first_column: A
+      second_column: B
+      logic: mul
+      output_column: A_mul_B
+
+  - ColumnsOperator:
+      first_column: A
+      second_column: B
+      logic: div
+      output_column: A_div_B
 
 pipeline_DropNA:
   - DropNA:
@@ -31,7 +43,31 @@ pipeline_FillNA:
       column_name: B
       value: 0
 
-pipeline_FilterRows:
+pipeline_FilterRows_e:
+  - FilterRows:
+      first_column: A
+      second_column: B
+      logic: e
+
+pipeline_FilterRows_g:
+  - FilterRows:
+      first_column: A
+      second_column: B
+      logic: g
+
+pipeline_FilterRows_ge:
+  - FilterRows:
+      first_column: A
+      second_column: B
+      logic: ge
+
+pipeline_FilterRows_l:
+  - FilterRows:
+      first_column: A
+      second_column: B
+      logic: l
+
+pipeline_FilterRows_le:
   - FilterRows:
       first_column: A
       second_column: B
@@ -43,15 +79,27 @@ pipeline_FlatMultiIndex:
 pipeline_MathOperator:
   - MathOperator:
       column_name: A
-      logic: div
-      value: 3
-      output_column: div_col
-
-  - MathOperator:
-      column_name: A
       logic: sum
       value: 3
       output_column: sum_col
+
+  - MathOperator:
+      column_name: A
+      logic: sub
+      value: 3
+      output_column: sub_col
+
+  - MathOperator:
+      column_name: A
+      logic: mul
+      value: 3
+      output_column: mul_col
+
+  - MathOperator:
+      column_name: A
+      logic: div
+      value: 3
+      output_column: div_col
 
 pipeline_MergeDataFrames:
   - MergeDataFrames:
