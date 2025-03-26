@@ -60,8 +60,6 @@ df = pd.DataFrame(
       'discount_pct': [0.1, 0.05, np.nan, 0.12, np.nan],
   }
 )
-
-print(df)
 ```
 
 | item   | item_type   |   price |   discount_pct |
@@ -130,9 +128,34 @@ config = get_pipeline_config("config.yaml", pipeline_name='pipeline_food'))
 
 # Run pipeline
 transformed_df = run_pipeline(df, config)
-
-print(transformed_df)
 ```
+A log visually shows your data pipeline:
+```plaintext
+- INFO - Loading pipeline named: pipeline_food
+- INFO - *** DataMorpher: CreateColumn ***
+- INFO -     column_name: food_marker
+- INFO -     value: food
+- INFO - *** DataMorpher: FilterRows ***
+- INFO -     first_column: item_type
+- INFO -     second_column: food_marker
+- INFO -     logic: e
+- INFO - *** DataMorpher: FillNA ***
+- INFO -     column_name: discount_pct
+- INFO -     value: 0
+- INFO - *** DataMorpher: ColumnsOperator ***
+- INFO -     first_column: price
+- INFO -     second_column: discount_pct
+- INFO -     logic: mul
+- INFO -     output_column: discount_amount
+- INFO - *** DataMorpher: ColumnsOperator ***
+- INFO -     first_column: price
+- INFO -     second_column: discount_amount
+- INFO -     logic: sub
+- INFO -     output_column: discounted_price
+- INFO - *** DataMorpher: RemoveColumns ***
+- INFO -     columns_name: ['discount_amount', 'food_marker']
+```
+The resulting DataFrame follows:
 | item   | item_type   |   price |   discount_pct |   discounted_price |
 |:-------|:------------|--------:|---------------:|-------------------:|
 | apple  | food        |     3   |           0.1  |               2.7  |
