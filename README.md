@@ -1,6 +1,7 @@
 # ⚙️ DataMorphers
 
 ![Unit Tests](https://github.com/davideganna/DataMorph/actions/workflows/tests.yaml/badge.svg)
+[![codecov](https://codecov.io/gh/davideganna/DataMorphers/graph/badge.svg?token=MXTUZEDC44)](https://codecov.io/gh/davideganna/DataMorphers)
 ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)
 ![PyPI version](https://img.shields.io/pypi/v/datamorphers.svg)
 
