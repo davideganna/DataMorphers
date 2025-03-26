@@ -81,31 +81,37 @@ To do so, we create a YAML file specifying a pipeline of transformations, named 
 
 ```yaml
 pipeline_food:
+  # Create a column named "food_marker", containing a fixed value named "food".
   - CreateColumn:
       column_name: food_marker
       value: food
 
+  # Compare the columns "item_type" and "food_marker", and keep rows that are equal (logic: "e").
   - FilterRows:
       first_column: item_type
       second_column: food_marker
       logic: e
 
+  # Some values in the column "discount_pct" are NaN. Fill them with 0.
   - FillNA:
       column_name: discount_pct
       value: 0
 
+  # Multiply the columns "price" and "discount_pct". Name the output column "discount_amount".
   - ColumnsOperator:
       first_column: price
       second_column: discount_pct
       logic: mul
       output_column: discount_amount
 
+  # Subtract the columns "price" and "discount_amount". Name the output column "discounted_price".
   - ColumnsOperator:
       first_column: price
       second_column: discount_amount
       logic: sub
       output_column: discounted_price
 
+  # Remove non interesting columns from the DataFrame.
   - RemoveColumns:
       columns_name:
         - discount_amount
@@ -138,7 +144,7 @@ print(transformed_df)
 
 ## Define runtime values in the YAML configuration
 
-DataMorph is flexible, since it can work with variables at runtime:
+DataMorph can work with variables evaluated at runtime, making it very flexible:
 
 ```yaml
 pipeline_runtime:
