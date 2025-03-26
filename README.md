@@ -10,7 +10,7 @@
 
 ## Overview
 
-DataMorphers is a Python library that provides a flexible framework for transforming Pandas DataFrames using a modular pipeline approach. Transformations are defined in a YAML configuration, and are applied sequentially to your dataset.
+DataMorphers is a Python library that provides a flexible framework for transforming Pandas DataFrames using a modular data pipeline approach. Transformations are defined in a YAML configuration, and are applied sequentially to your dataset.
 
 By leveraging DataMorphers, your pipelines become cleaner, more scalable and easier to debug.
 
@@ -18,14 +18,22 @@ By leveraging DataMorphers, your pipelines become cleaner, more scalable and eas
 
 - Modular and extensible transformation framework.
 - Easily configurable via YAML files.
-- Supports multiple transformations, including:
-  - **CreateColumn**: Creates a new column with a constant value.
-  - **ColumnsOperator**: Performs a math operation on two columns and stores the result in a new column.
-  - **NormalizeColumn**: Applies Z-score normalization.
-  - **RemoveColumns**: Drops specified columns.
-  - **FillNA**: Replaces missing values with a default.
-  - **MergeDataFrames**: Merges two DataFrames based on common keys.
-  - And more!
+- Supports multiple transformations, alphabetically ordered here (more to come!):
+  - [CreateColumn](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L7)
+  - [CastColumnTypes](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L19)
+  - [ColumnsOperator](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L30)
+  - [DeleteDataFrame](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L58)
+  - [DropNA](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L76)
+  - [FillNA](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L87)
+  - [FilterRows](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L99)
+  - [FlatMultiIndex](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L122)
+  - [MathOperator](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L142)
+  - [MergeDataFrames](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L164)
+  - [NormalizeColumn](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L185)
+  - [RemoveColumns](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L199)
+  - [RenameColumn](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L212)
+  - [SaveDataFrame](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L224)
+  - [SelectColumns](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L240)
 - Supports custom transformations, defined by the user.
 
 ## Installation
@@ -163,7 +171,8 @@ df = run_pipeline(df, config=config)
 
 ## Extending `datamorphers` with Custom Implementations
 
-The `datamorphers` package allows you to define custom transformations by implementing your own DataMorphers. These user-defined implementations extend the base ones and can be used seamlessly within the pipeline.
+Limiting the pipelines to only the basic DataMorphers defined in this library would make this package of little use.
+For this reason, `datamorphers` allows you to define custom transformations by implementing your own DataMorphers. These user-defined implementations extend the base ones and can be used seamlessly within the pipeline.
 
 ### Creating a Custom DataMorpher
 
@@ -171,18 +180,19 @@ To define a custom transformation, create a `custom_datamorphers.py` file in you
 
 ```python
 import pandas as pd
+import numpy as np
 from datamorphers.base import DataMorpher
 
-class CustomTransformer(DataMorpher):
-    def __init__(self, column_name: str, value: float):
-        self.column_name = column_name
-        self.value = value
+class CalculateCircularArea(DataMorpher):
+    def __init__(self, radius_column: str, output_column: str):
+        self.radius_column = radius_column
+        self.output_column = output_column
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        Implement your custom transformation here!
+        Calculates the area of a circle.
         """
-        df[self.column_name] = self.value * 3.14
+        df[self.output_column] = np.pi * df[self.radius_column] ** 2
         return df
 ```
 
@@ -195,13 +205,13 @@ The pipeline will first check for the specified DataMorpher in `custom_datamorph
 
 ### Running the Pipeline with Custom DataMorphers
 
-When defining a pipeline configuration (e.g., in a YAML file), simply reference your custom DataMorpher as you would with a base one:
+When defining a pipeline configuration in the YAML file, simply reference your custom DataMorpher as you would with a base one:
 
 ```yaml
 custom_pipeline:
-  CustomTransformer:
-    column_name: price
-    value: 1.3
+  - CalculateCircularArea:
+      radius_column: radius
+      output_column: area_circle
 ```
 
 Then, execute the pipeline as usual:
