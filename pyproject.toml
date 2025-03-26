@@ -13,6 +13,7 @@ license = { text = "MIT" }
 readme = "README.md"
 dependencies = [
     "black==25.1.0",
+    "lxml==5.3.1",
     "pandas==2.2.3",
     "pre_commit==4.1.0",
     "pytest==8.3.4",
