@@ -1,29 +1,42 @@
 import pandas as pd
 import json
 from typing import Any
+import narwhals as nw
+from narwhals.typing import IntoFrame
 from datamorphers.base import DataMorpher
 
 
 class CreateColumn(DataMorpher):
-    def __init__(self, column_name: str, value: Any):
+    def __init__(self, column_name: str, value: int):
         super().__init__()
         self.column_name = column_name
         self.value = value
 
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Adds a new column with a constant value to the dataframe."""
-        df[self.column_name] = self.value
+        df = nw.from_native(df)
+        df = df.with_columns(nw.lit(self.value).alias(self.column_name)).to_native()
         return df
 
 
 class CastColumnTypes(DataMorpher):
+    nw_map = {
+        "float32": nw.Float32,
+        "float64": nw.Float64,
+        "int": nw.Int32,
+        "str": nw.String,
+    }
+
     def __init__(self, cast_dict: dict):
         super().__init__()
         self.cast_dict = cast_dict
 
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Casts columns in the DataFrame to specific column types."""
-        df = df.astype(self.cast_dict)
+        df = nw.from_native(df)
+        df = df.with_columns(
+            nw.col(i).cast(self.nw_map[c]) for i, c in self.cast_dict.items()
+        )
         return df
 
 

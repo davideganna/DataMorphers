@@ -5,6 +5,7 @@ import datamorphers.datamorphers as datamorphers
 from datamorphers.base import DataMorpher
 from datamorphers import logger, custom_datamorphers
 from typing import Any
+from narwhals.typing import IntoFrame
 
 
 def get_pipeline_config(yaml_path: str, pipeline_name: str, **kwargs: dict) -> dict:
@@ -59,7 +60,7 @@ def log_pipeline_config(config: dict):
             logger.info(f"{4 * ' '}{arg}: {value}")
 
 
-def run_pipeline(df: pd.DataFrame, config: Any, debug: bool = False):
+def run_pipeline(df: IntoFrame, config: Any, debug: bool = False):
     """
     Runs the pipeline on the DataFrame.
 

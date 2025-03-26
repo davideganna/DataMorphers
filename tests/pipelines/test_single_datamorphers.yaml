@@ -6,7 +6,7 @@ pipeline_CreateColumn:
 pipeline_CastColumnTypes:
   - CastColumnTypes:
       cast_dict:
-        A: float16
+        A: float32
         C: str
 
 pipeline_ColumnsOperator:

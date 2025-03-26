@@ -1,4 +1,6 @@
 venv/
+config.yaml
+dev_nb.ipynb
 __pycache__/
 .pytest_cache/
 .egg-info/

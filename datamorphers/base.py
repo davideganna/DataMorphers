@@ -1,6 +1,7 @@
 import pandas as pd
 import logging
 from abc import ABC, abstractmethod
+from narwhals.typing import IntoFrame
 
 
 class DataMorpher(ABC):
@@ -8,6 +9,6 @@ class DataMorpher(ABC):
         pass
 
     @abstractmethod
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Applies a transformation on the DataFrame."""
         pass
