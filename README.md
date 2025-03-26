@@ -1,14 +1,15 @@
-# ⚙️ DataMorph
+# ⚙️ DataMorphers
 
 ![Unit Tests](https://github.com/davideganna/DataMorph/actions/workflows/tests.yaml/badge.svg)
 ![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)
+![PyPI version](https://img.shields.io/pypi/v/datamorphers.svg)
 
 
 ## Overview
 
-DataMorph is a Python library that provides a flexible framework for transforming Pandas DataFrames using a modular pipeline approach. Transformations are defined in a YAML configuration, and are applied sequentially to your dataset.
+DataMorphers is a Python library that provides a flexible framework for transforming Pandas DataFrames using a modular pipeline approach. Transformations are defined in a YAML configuration, and are applied sequentially to your dataset.
 
-By leveraging DataMorph, your pipelines become cleaner, more scalable and easier to debug.
+By leveraging DataMorphers, your pipelines become cleaner, more scalable and easier to debug.
 
 ## Features
 
@@ -26,18 +27,10 @@ By leveraging DataMorph, your pipelines become cleaner, more scalable and easier
 
 ## Installation
 
-To install DataMorph in your project:
+Install DataMorphers in your project directly from PyPI:
 
 ```sh
-pip install git+https://github.com/davideganna/DataMorph.git
-```
-
-If you're developing locally:
-
-```sh
-git clone https://github.com/davideganna/DataMorph.git
-cd datamorphers
-pip install -e .
+pip install datamorphers
 ```
 
 ## Usage
