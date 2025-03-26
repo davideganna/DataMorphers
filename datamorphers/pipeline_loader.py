@@ -1,4 +1,5 @@
 import yaml
+import logging
 import pandas as pd
 import datamorphers.datamorphers as datamorphers
 from datamorphers.base import DataMorpher
@@ -58,7 +59,7 @@ def log_pipeline_config(config: dict):
             logger.info(f"{4*' '}{arg}: {value}")
 
 
-def run_pipeline(df: pd.DataFrame, config: Any):
+def run_pipeline(df: pd.DataFrame, config: Any, debug: bool = False):
     """
     Runs the pipeline on the DataFrame.
 
@@ -70,6 +71,11 @@ def run_pipeline(df: pd.DataFrame, config: Any):
     Returns:
         pd.DataFrame: The transformed DataFrame.
     """
+    # Get the custom logger
+    logger = logging.getLogger("datamorphers")
+
+    # Set logging level based on debug flag
+    logger.setLevel(logging.DEBUG if debug else logging.INFO)
 
     # Display pipeline configuration
     log_pipeline_config(config)
