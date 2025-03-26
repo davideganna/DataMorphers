@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install pytest
+          pip install pytest pytest-cov
 
       - name: Install package
         run: pip install -e .
@@ -32,5 +32,7 @@ jobs:
       - name: Run tests with coverage
         run: pytest -v --disable-pytest-warnings --cov=datamorphers --cov-report=xml
 
-      - name: Upload coverage report to Codecov
-        uses: codecov/codecov-action@v3
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
