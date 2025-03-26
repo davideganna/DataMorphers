@@ -13,7 +13,7 @@ pipeline_ColumnsOperator:
   - ColumnsOperator:
       first_column: A
       second_column: B
-      logic: sum
+      logic: add
       output_column: A_sum_B
 
   - ColumnsOperator:
@@ -31,7 +31,7 @@ pipeline_ColumnsOperator:
   - ColumnsOperator:
       first_column: A
       second_column: B
-      logic: div
+      logic: truediv
       output_column: A_div_B
 
 pipeline_DropNA:
@@ -47,13 +47,13 @@ pipeline_FilterRows_e:
   - FilterRows:
       first_column: A
       second_column: B
-      logic: e
+      logic: eq
 
 pipeline_FilterRows_g:
   - FilterRows:
       first_column: A
       second_column: B
-      logic: g
+      logic: gt
 
 pipeline_FilterRows_ge:
   - FilterRows:
@@ -65,7 +65,7 @@ pipeline_FilterRows_l:
   - FilterRows:
       first_column: A
       second_column: B
-      logic: l
+      logic: lt
 
 pipeline_FilterRows_le:
   - FilterRows:

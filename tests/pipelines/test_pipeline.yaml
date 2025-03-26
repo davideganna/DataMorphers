@@ -8,7 +8,7 @@ pipeline_food:
   - FilterRows:
       first_column: item_type
       second_column: food_marker
-      logic: e
+      logic: eq
 
   # Some values in the column "discount_pct" are NaN. Fill them with 0.
   - FillNA:

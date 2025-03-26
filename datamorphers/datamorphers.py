@@ -3,6 +3,7 @@ import json
 from typing import Any
 import narwhals as nw
 from narwhals.typing import IntoFrame
+import operator as python_standard_operator
 from datamorphers.base import DataMorpher
 
 
@@ -20,10 +21,13 @@ class CreateColumn(DataMorpher):
 
 
 class CastColumnTypes(DataMorpher):
+    # Once Nw will support python datatypes we will get rid of this ugly mapping
     nw_map = {
         "float32": nw.Float32,
         "float64": nw.Float64,
-        "int": nw.Int32,
+        "int32": nw.Int32,
+        "int16": nw.Int16,
+        "int128": nw.Int128,
         "str": nw.String,
     }
 
@@ -36,7 +40,7 @@ class CastColumnTypes(DataMorpher):
         df = nw.from_native(df)
         df = df.with_columns(
             nw.col(i).cast(self.nw_map[c]) for i, c in self.cast_dict.items()
-        )
+        ).to_native()
         return df
 
 
@@ -45,26 +49,25 @@ class ColumnsOperator(DataMorpher):
         self, first_column: str, second_column: str, logic: str, output_column: str
     ):
         """Logic can be sum, sub, mul, div."""
+
         super().__init__()
         self.first_column = first_column
         self.second_column = second_column
         self.logic = logic
         self.output_column = output_column
 
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """
         Performs an operation on the values in the specified column by
             the values inanother column.
         Renames the resulting column as 'output_column'.
         """
-        if self.logic == "sum":
-            df[self.output_column] = df[self.first_column] + df[self.second_column]
-        if self.logic == "sub":
-            df[self.output_column] = df[self.first_column] - df[self.second_column]
-        if self.logic == "mul":
-            df[self.output_column] = df[self.first_column] * df[self.second_column]
-        if self.logic == "div":
-            df[self.output_column] = df[self.first_column] / df[self.second_column]
+
+        df = nw.from_native(df)
+        # Support for native python operators
+        operation = getattr(python_standard_operator, self.logic)
+        expr = operation(nw.col(self.first_column), (nw.col(self.second_column)))
+        df = df.with_columns(expr.alias(self.output_column)).to_native()
         return df
 
 
@@ -73,7 +76,7 @@ class DeleteDataFrame(DataMorpher):
         super().__init__()
         self.file_name = file_name if type(file_name) is list else [file_name]
 
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """
         Deletes a DataFrame (or a list of DataFrames) previously saved using pickle.
         """
@@ -91,9 +94,10 @@ class DropNA(DataMorpher):
         super().__init__()
         self.column_name = column_name
 
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Drops rows with any NaN values."""
-        df = df.dropna(subset=self.column_name)
+        df = nw.from_native(df)
+        df = df.drop_nulls(subset=self.column_name).to_native()
         return df
 
 
@@ -103,32 +107,32 @@ class FillNA(DataMorpher):
         self.column_name = column_name
         self.value = value
 
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Fills NaN values in the specified column with the provided value."""
-        df[self.column_name] = df[self.column_name].fillna(self.value)
+        df = nw.from_native(df)
+        df = df.with_columns(
+            nw.when(nw.col(self.column_name).is_nan())
+            .then(self.value)
+            .otherwise(nw.col(self.column_name))
+            .alias(self.column_name)
+        ).to_native()
         return df
 
 
 class FilterRows(DataMorpher):
     def __init__(self, *, first_column: str, second_column: str, logic: str):
-        """Logic can be e, g, l, ge, le."""
+        """Logic is python standard operator"""
         super().__init__()
         self.first_column = first_column
         self.second_column = second_column
         self.logic = logic
 
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Filters rows based on a condition in the specified column."""
-        if self.logic == "e":
-            df = df.loc[df[self.first_column] == df[self.second_column]]
-        elif self.logic == "g":
-            df = df.loc[df[self.first_column] > df[self.second_column]]
-        elif self.logic == "ge":
-            df = df.loc[df[self.first_column] >= df[self.second_column]]
-        elif self.logic == "l":
-            df = df.loc[df[self.first_column] < df[self.second_column]]
-        elif self.logic == "le":
-            df = df.loc[df[self.first_column] <= df[self.second_column]]
+        df = nw.from_native(df)
+        operator = getattr(python_standard_operator, self.logic)
+        expr = operator(nw.col(self.first_column), nw.col(self.second_column))
+        df = df.filter(expr).to_native()
         return df
 
 
@@ -140,6 +144,7 @@ class FlatMultiIndex(DataMorpher):
         """
         Flattens the multi-index columns, leaving intact single index columns.
         After being flattened, the columns will be joined by an underscore.
+        Pandas only
 
         Example:
             Before:
@@ -147,6 +152,7 @@ class FlatMultiIndex(DataMorpher):
             After:
                 Index(['A_B', 'C_D', 'E']
         """
+
         df.columns = df.columns.to_flat_index()
         df.columns = df.columns.map("_".join)
         return df
@@ -216,9 +222,10 @@ class RemoveColumns(DataMorpher):
             columns_name if type(columns_name) is list else [columns_name]
         )
 
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Removes a specified column from the DataFrame."""
-        df = df.drop(columns=self.columns_name)
+        df = nw.from_native(df)
+        df = df.drop(self.columns_name).to_native()
         return df
 
 
@@ -257,7 +264,8 @@ class SelectColumns(DataMorpher):
             columns_name if type(columns_name) is list else [columns_name]
         )
 
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Selects columns from the DataFrame."""
-        df = df[self.columns_name]
+        df = nw.from_native(df)
+        df = df.select(self.columns_name).to_native()
         return df

@@ -70,7 +70,7 @@ def test_cast_columns_type():
     )
 
     df = generate_mock_df()
-    df = run_pipeline(df, config=config)
+    df = nw.from_native(run_pipeline(df, config=config))
 
     assert isinstance(df["A"].dtype, nw.Float32)
     assert isinstance(df["C"].dtype, nw.String)
@@ -200,7 +200,6 @@ def test_filter_rows():
         df = run_pipeline(df, config=config)
 
         res = df.loc[df["A"] >= df["B"]]
-
         assert df.equals(res)
 
     def _test_filter_rows_l():
