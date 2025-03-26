@@ -56,7 +56,7 @@ def log_pipeline_config(config: dict):
 
         logger.info(f"*** DataMorpher: {cls} ***")
         for arg, value in args.items():
-            logger.info(f"{4*' '}{arg}: {value}")
+            logger.info(f"{4 * ' '}{arg}: {value}")
 
 
 def run_pipeline(df: pd.DataFrame, config: Any, debug: bool = False):
