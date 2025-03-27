@@ -23,6 +23,7 @@ By leveraging DataMorphers, your pipelines become cleaner, more scalable and eas
   - [CreateColumn](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L7)
   - [CastColumnTypes](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L19)
   - [ColumnsOperator](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L30)
+  - [DropDuplicates](https://github.com/davideganna/DataMorphers/blob/f2f0d986ce6753e9069bb95cc357b8ff3fd2aea6/datamorphers/datamorphers.py#L78C7-L78C21)
   - [DeleteDataFrame](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L58)
   - [DropNA](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L76)
   - [FillNA](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L87)
@@ -33,6 +34,7 @@ By leveraging DataMorphers, your pipelines become cleaner, more scalable and eas
   - [NormalizeColumn](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L185)
   - [RemoveColumns](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L199)
   - [RenameColumn](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L212)
+  - [Rolling](https://github.com/davideganna/DataMorphers/blob/f2f0d986ce6753e9069bb95cc357b8ff3fd2aea6/datamorphers/datamorphers.py#L249)
   - [SaveDataFrame](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L224)
   - [SelectColumns](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L240)
 - Supports custom transformations, defined by the user.
