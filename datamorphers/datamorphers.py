@@ -1,5 +1,7 @@
 import pandas as pd
+import narwhals as nw
 import json
+from narwhals.typing import FrameT
 from typing import Any
 from datamorphers.base import DataMorpher
 
@@ -70,6 +72,29 @@ class DeleteDataFrame(DataMorpher):
             if os.path.isfile(f"{file}.pkl"):
                 os.remove(f"{file}.pkl")
 
+        return df
+
+
+class DropDuplicates(DataMorpher):
+    def __init__(self, subset: list | str = None, keep: str = "any"):
+        super().__init__()
+        if subset is None:
+            self.subset = None
+        elif isinstance(subset, list):
+            self.subset = subset
+        else:
+            self.subset = [subset]
+        self.keep = keep
+
+    @nw.narwhalify
+    def _datamorph(self, df: FrameT) -> FrameT:
+        """Drops duplicated rows."""
+        if self.subset:
+            # Drop duplicates only on a subset of columns
+            df = df.unique(subset=self.subset, keep=self.keep)
+        else:
+            # Drop duplicates on the entire DataFrame
+            df = df.unique()
         return df
 
 

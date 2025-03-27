@@ -21,9 +21,9 @@ YAML_PATH = "tests/pipelines/test_single_datamorphers.yaml"
 def generate_mock_df():
     df = pd.DataFrame(
         {
-            "A": [1, 2, 3],
-            "B": [4, 5, np.nan],
-            "C": [7, 8, 9],
+            "A": [1, 2, 2, 2, 3],
+            "B": [4, 5, 5, 6, np.nan],
+            "C": [7, 8, 8, 8.5, 9],
         }
     )
     return df
@@ -117,6 +117,42 @@ def test_columns_operator():
     assert (df["A_sub_B"]).equals(res_sub)
     assert (df["A_mul_B"]).equals(res_mul)
     assert (df["A_div_B"]).equals(res_div)
+
+
+def test_drop_duplicates():
+    def _test_drop_duplicates_all():
+        """
+        - DropDuplicates
+        """
+        config = get_pipeline_config(
+            yaml_path=YAML_PATH, pipeline_name="pipeline_DropDuplicates_all"
+        )
+
+        df = generate_mock_df()
+        df_out = run_pipeline(df, config=config)
+
+        df_no_dup = df.drop_duplicates()
+
+        assert df_out.equals(df_no_dup)
+
+    def _test_drop_duplicates_subset():
+        """
+        - DropDuplicates
+            subset: A
+        """
+        config = get_pipeline_config(
+            yaml_path=YAML_PATH, pipeline_name="pipeline_DropDuplicates_subset"
+        )
+
+        df = generate_mock_df()
+        df_out = run_pipeline(df, config=config)
+
+        df_no_dup = df.drop_duplicates(subset="A")
+
+        assert df_out.equals(df_no_dup)
+
+    _test_drop_duplicates_all()
+    _test_drop_duplicates_subset()
 
 
 def test_dropna():

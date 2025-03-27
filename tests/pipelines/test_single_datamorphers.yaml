@@ -34,6 +34,13 @@ pipeline_ColumnsOperator:
       logic: div
       output_column: A_div_B
 
+pipeline_DropDuplicates_all:
+  - DropDuplicates
+
+pipeline_DropDuplicates_subset:
+  - DropDuplicates:
+      subset: A
+
 pipeline_DropNA:
   - DropNA:
       column_name: B
