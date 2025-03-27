@@ -135,7 +135,7 @@ def test_drop_duplicates():
 
         assert df_out.equals(df_no_dup)
 
-    def _test_drop_duplicates_subset():
+    def _test_drop_duplicates_subset_single():
         """
         - DropDuplicates
             subset: A
@@ -151,8 +151,25 @@ def test_drop_duplicates():
 
         assert df_out.equals(df_no_dup)
 
+    def _test_drop_duplicates_subset_list():
+        """
+        - DropDuplicates
+            subset: A
+        """
+        config = get_pipeline_config(
+            yaml_path=YAML_PATH, pipeline_name="pipeline_DropDuplicates_subset"
+        )
+
+        df = generate_mock_df()
+        df_out = run_pipeline(df, config=config)
+
+        df_no_dup = df.drop_duplicates(subset=["A"])
+
+        assert df_out.equals(df_no_dup)
+
     _test_drop_duplicates_all()
-    _test_drop_duplicates_subset()
+    _test_drop_duplicates_subset_single()
+    _test_drop_duplicates_subset_list()
 
 
 def test_dropna():
