@@ -2,7 +2,7 @@ import pandas as pd
 import narwhals as nw
 import json
 from narwhals.typing import FrameT
-from typing import Any
+from typing import Any, Literal
 from datamorphers.base import DataMorpher
 
 
@@ -243,6 +243,37 @@ class RenameColumn(DataMorpher):
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """Renames a column in the dataframe."""
         df = df.rename(columns={self.old_column_name: self.new_column_name})
+        return df
+
+
+class Rolling(DataMorpher):
+    def __init__(
+        self,
+        *,
+        column_name: str,
+        how: Literal["mean", "std", "sum", "var"],
+        window_size: int,
+        output_column: str,
+    ):
+        super().__init__()
+        self.column_name = column_name
+        self.how = how
+        self.window_size = window_size
+        self.output_column = output_column
+
+    @nw.narwhalify
+    def _datamorph(self, df: FrameT):
+        """Computes rolling operation on a column."""
+        col = df.get_column(self.column_name)
+        if self.how == "mean":
+            rolling_col = col.rolling_mean(self.window_size)
+        elif self.how == "std":
+            rolling_col = col.rolling_std(self.window_size)
+        elif self.how == "sum":
+            rolling_col = col.rolling_sum(self.window_size)
+        elif self.how == "var":
+            rolling_col = col.rolling_var(self.window_size)
+        df = df.with_columns(rolling_col.alias(self.output_column))
         return df
 
 
