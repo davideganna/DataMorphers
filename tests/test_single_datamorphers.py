@@ -440,6 +440,48 @@ def test_rename_column():
     assert "RenamedColumn" in df.columns
 
 
+def test_rolling():
+    """
+    - Rolling:
+        column_name: A
+        how: mean
+        window_size: 2
+        output_column: rolling_mean
+
+    - Rolling:
+        column_name: A
+        how: std
+        window_size: 2
+        output_column: rolling_std
+
+    - Rolling:
+        column_name: A
+        how: sum
+        window_size: 2
+        output_column: rolling_sum
+
+    - Rolling:
+        column_name: A
+        how: var
+        window_size: 2
+        output_column: rolling_var
+    """
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name="pipeline_Rolling")
+
+    df = generate_mock_df()
+    df = run_pipeline(df, config=config)
+
+    rolling_mean = df["A"].rolling(2).mean()
+    rolling_std = df["A"].rolling(2).std()
+    rolling_sum = df["A"].rolling(2).sum()
+    rolling_var = df["A"].rolling(2).var()
+
+    assert df["rolling_mean"].equals(rolling_mean)
+    assert df["rolling_std"].equals(rolling_std)
+    assert df["rolling_sum"].equals(rolling_sum)
+    assert df["rolling_var"].equals(rolling_var)
+
+
 def test_save_dataframe():
     """
     - SaveDataFrame:
