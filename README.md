@@ -49,20 +49,6 @@ pip install datamorphers
 
 ### 1. Define your initial DataFrame
 
-```python
-import pandas as pd
-
-# Sample DataFrame
-df = pd.DataFrame(
-  {
-      'item': ['apple', 'TV', 'banana', 'pasta', 'cake'],
-      'item_type': ['food', 'electronics', 'food', 'food', 'food'],
-      'price': [3, 100, 2.5, 3, 15],
-      'discount_pct': [0.1, 0.05, np.nan, 0.12, np.nan],
-  }
-)
-```
-
 | item   | item_type   |   price |   discount_pct |
 |:-------|:------------|--------:|---------------:|
 | apple  | food        |     3   |           0.1  |
