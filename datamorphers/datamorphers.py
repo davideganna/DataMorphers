@@ -13,10 +13,10 @@ class CreateColumn(DataMorpher):
         self.column_name = column_name
         self.value = value
 
+    @nw.narwhalify
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Adds a new column with a constant value to the dataframe."""
-        df = nw.from_native(df)
-        df = df.with_columns(nw.lit(self.value).alias(self.column_name)).to_native()
+        df = df.with_columns(nw.lit(self.value).alias(self.column_name))
         return df
 
 
@@ -25,9 +25,8 @@ class CastColumnTypes(DataMorpher):
     nw_map = {
         "float32": nw.Float32,
         "float64": nw.Float64,
-        "int32": nw.Int32,
         "int16": nw.Int16,
-        "int128": nw.Int128,
+        "int32": nw.Int32,
         "str": nw.String,
     }
 
@@ -35,12 +34,12 @@ class CastColumnTypes(DataMorpher):
         super().__init__()
         self.cast_dict = cast_dict
 
+    @nw.narwhalify
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Casts columns in the DataFrame to specific column types."""
-        df = nw.from_native(df)
         df = df.with_columns(
             nw.col(i).cast(self.nw_map[c]) for i, c in self.cast_dict.items()
-        ).to_native()
+        )
         return df
 
 
@@ -56,18 +55,16 @@ class ColumnsOperator(DataMorpher):
         self.logic = logic
         self.output_column = output_column
 
+    @nw.narwhalify
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """
         Performs an operation on the values in the specified column by
             the values inanother column.
         Renames the resulting column as 'output_column'.
         """
-
-        df = nw.from_native(df)
-        # Support for native python operators
         operation = getattr(python_standard_operator, self.logic)
         expr = operation(nw.col(self.first_column), (nw.col(self.second_column)))
-        df = df.with_columns(expr.alias(self.output_column)).to_native()
+        df = df.with_columns(expr.alias(self.output_column))
         return df
 
 
@@ -94,10 +91,10 @@ class DropNA(DataMorpher):
         super().__init__()
         self.column_name = column_name
 
+    @nw.narwhalify
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Drops rows with any NaN values."""
-        df = nw.from_native(df)
-        df = df.drop_nulls(subset=self.column_name).to_native()
+        df = df.drop_nulls(subset=self.column_name)
         return df
 
 
@@ -107,15 +104,15 @@ class FillNA(DataMorpher):
         self.column_name = column_name
         self.value = value
 
+    @nw.narwhalify
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Fills NaN values in the specified column with the provided value."""
-        df = nw.from_native(df)
         df = df.with_columns(
             nw.when(nw.col(self.column_name).is_nan())
             .then(self.value)
             .otherwise(nw.col(self.column_name))
             .alias(self.column_name)
-        ).to_native()
+        )
         return df
 
 
@@ -127,12 +124,12 @@ class FilterRows(DataMorpher):
         self.second_column = second_column
         self.logic = logic
 
+    @nw.narwhalify
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Filters rows based on a condition in the specified column."""
-        df = nw.from_native(df)
         operator = getattr(python_standard_operator, self.logic)
         expr = operator(nw.col(self.first_column), nw.col(self.second_column))
-        df = df.filter(expr).to_native()
+        df = df.filter(expr)
         return df
 
 
@@ -222,10 +219,10 @@ class RemoveColumns(DataMorpher):
             columns_name if type(columns_name) is list else [columns_name]
         )
 
+    @nw.narwhalify
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Removes a specified column from the DataFrame."""
-        df = nw.from_native(df)
-        df = df.drop(self.columns_name).to_native()
+        df = df.drop(self.columns_name)
         return df
 
 
@@ -264,8 +261,8 @@ class SelectColumns(DataMorpher):
             columns_name if type(columns_name) is list else [columns_name]
         )
 
+    @nw.narwhalify
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Selects columns from the DataFrame."""
-        df = nw.from_native(df)
-        df = df.select(self.columns_name).to_native()
+        df = df.select(self.columns_name)
         return df
