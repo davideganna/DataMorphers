@@ -37,9 +37,13 @@ pipeline_ColumnsOperator:
 pipeline_DropDuplicates_all:
   - DropDuplicates
 
-pipeline_DropDuplicates_subset:
+pipeline_DropDuplicates_subset_single:
   - DropDuplicates:
       subset: A
+
+pipeline_DropDuplicates_subset_list:
+  - DropDuplicates:
+      subset: [A]
 
 pipeline_DropNA:
   - DropNA:

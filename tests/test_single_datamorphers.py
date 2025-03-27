@@ -141,7 +141,7 @@ def test_drop_duplicates():
             subset: A
         """
         config = get_pipeline_config(
-            yaml_path=YAML_PATH, pipeline_name="pipeline_DropDuplicates_subset"
+            yaml_path=YAML_PATH, pipeline_name="pipeline_DropDuplicates_subset_single"
         )
 
         df = generate_mock_df()
@@ -157,7 +157,7 @@ def test_drop_duplicates():
             subset: A
         """
         config = get_pipeline_config(
-            yaml_path=YAML_PATH, pipeline_name="pipeline_DropDuplicates_subset"
+            yaml_path=YAML_PATH, pipeline_name="pipeline_DropDuplicates_subset_list"
         )
 
         df = generate_mock_df()
