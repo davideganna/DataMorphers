@@ -32,7 +32,7 @@ By leveraging DataMorphers, your pipelines become cleaner, more scalable and eas
   - [MergeDataFrames](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L164)
   - [NormalizeColumn](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L185)
   - [RemoveColumns](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L199)
-  - [RenameColumns](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L212)
+  - [RenameColumns](https://github.com/davideganna/DataMorphers/blob/ab196d96d4756c3729f829975275714aba612812/datamorphers/datamorphers.py#L226)
   - [Rolling](https://github.com/davideganna/DataMorphers/blob/f2f0d986ce6753e9069bb95cc357b8ff3fd2aea6/datamorphers/datamorphers.py#L249)
   - [SaveDataFrame](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L224)
   - [SelectColumns](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L240)
