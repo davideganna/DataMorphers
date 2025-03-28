@@ -174,26 +174,6 @@ class FlatMultiIndex(DataMorpher):
         return df
 
 
-class MathOperator(DataMorpher):
-    def __init__(
-        self, *, column_name: str, logic: str, value: float, output_column: str
-    ):
-        """Logic can be sum, sub, mul, div."""
-        super().__init__()
-        self.column_name = column_name
-        self.logic = logic
-        self.value = value
-        self.output_column = output_column
-
-    @nw.narwhalify
-    def _datamorph(self, df: FrameT) -> FrameT:
-        """Math operation between a column and a value, with the operation defined in logic."""
-        operation = getattr(operator, self.logic)
-        expr: nw.Expr = operation(nw.col(self.column_name), self.value)
-        df = df.with_columns(expr.alias(self.output_column))
-        return df
-
-
 class MergeDataFrames(DataMorpher):
     def __init__(self, df_to_join: dict, join_cols: list, how: str, suffixes: list):
         super().__init__()

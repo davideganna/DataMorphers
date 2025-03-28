@@ -89,31 +89,6 @@ pipeline_FilterRows_le:
 pipeline_FlatMultiIndex:
   - FlatMultiIndex
 
-pipeline_MathOperator:
-  - MathOperator:
-      column_name: A
-      logic: add
-      value: 3
-      output_column: sum_col
-
-  - MathOperator:
-      column_name: A
-      logic: sub
-      value: 3
-      output_column: sub_col
-
-  - MathOperator:
-      column_name: A
-      logic: mul
-      value: 3
-      output_column: mul_col
-
-  - MathOperator:
-      column_name: A
-      logic: truediv
-      value: 3
-      output_column: div_col
-
 pipeline_MergeDataFrames:
   - MergeDataFrames:
       df_to_join: ${second_df}
