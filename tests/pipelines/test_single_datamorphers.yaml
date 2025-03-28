@@ -34,6 +34,17 @@ pipeline_ColumnsOperator:
       logic: truediv
       output_column: A_div_B
 
+pipeline_DropDuplicates_all:
+  - DropDuplicates
+
+pipeline_DropDuplicates_subset_single:
+  - DropDuplicates:
+      subset: A
+
+pipeline_DropDuplicates_subset_list:
+  - DropDuplicates:
+      subset: [A]
+
 pipeline_DropNA:
   - DropNA:
       column_name: B
@@ -125,6 +136,28 @@ pipeline_RenameColumn:
   - RenameColumn:
       old_column_name: A
       new_column_name: RenamedColumn
+
+pipeline_Rolling:
+  - Rolling:
+      column_name: A
+      how: mean
+      window_size: 2
+      output_column: rolling_mean
+  - Rolling:
+      column_name: A
+      how: std
+      window_size: 2
+      output_column: rolling_std
+  - Rolling:
+      column_name: A
+      how: sum
+      window_size: 2
+      output_column: rolling_sum
+  - Rolling:
+      column_name: A
+      how: var
+      window_size: 2
+      output_column: rolling_var
 
 pipeline_SaveDataFrame:
   - SaveDataFrame:

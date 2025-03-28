@@ -11,14 +11,9 @@ authors = [
 ]
 license = { text = "MIT" }
 readme = "README.md"
-dependencies = [
-    "black==25.1.0",
-    "lxml==5.3.1",
-    "pandas==2.2.3",
-    "pre_commit==4.1.0",
-    "pytest==8.3.4",
-    "PyYAML==6.0.2"
-]
 
 [tool.setuptools]
 packages = ["datamorphers"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }

@@ -22,9 +22,9 @@ YAML_PATH = "tests/pipelines/test_single_datamorphers.yaml"
 def generate_mock_df():
     df = pd.DataFrame(
         {
-            "A": [1, 2, 3],
-            "B": [4, 5, np.nan],
-            "C": [7, 8, 9],
+            "A": [1, 2, 2, 2, 3],
+            "B": [4, 5, 5, 6, np.nan],
+            "C": [7, 8, 8, 8.5, 9],
         }
     )
     return df
@@ -118,6 +118,59 @@ def test_columns_operator():
     assert (df["A_sub_B"]).equals(res_sub)
     assert (df["A_mul_B"]).equals(res_mul)
     assert (df["A_div_B"]).equals(res_div)
+
+
+def test_drop_duplicates():
+    def _test_drop_duplicates_all():
+        """
+        - DropDuplicates
+        """
+        config = get_pipeline_config(
+            yaml_path=YAML_PATH, pipeline_name="pipeline_DropDuplicates_all"
+        )
+
+        df = generate_mock_df()
+        df_out = run_pipeline(df, config=config)
+
+        df_no_dup = df.drop_duplicates()
+
+        assert df_out.equals(df_no_dup)
+
+    def _test_drop_duplicates_subset_single():
+        """
+        - DropDuplicates
+            subset: A
+        """
+        config = get_pipeline_config(
+            yaml_path=YAML_PATH, pipeline_name="pipeline_DropDuplicates_subset_single"
+        )
+
+        df = generate_mock_df()
+        df_out = run_pipeline(df, config=config)
+
+        df_no_dup = df.drop_duplicates(subset="A")
+
+        assert df_out.equals(df_no_dup)
+
+    def _test_drop_duplicates_subset_list():
+        """
+        - DropDuplicates
+            subset: A
+        """
+        config = get_pipeline_config(
+            yaml_path=YAML_PATH, pipeline_name="pipeline_DropDuplicates_subset_list"
+        )
+
+        df = generate_mock_df()
+        df_out = run_pipeline(df, config=config)
+
+        df_no_dup = df.drop_duplicates(subset=["A"])
+
+        assert df_out.equals(df_no_dup)
+
+    _test_drop_duplicates_all()
+    _test_drop_duplicates_subset_single()
+    _test_drop_duplicates_subset_list()
 
 
 def test_dropna():
@@ -385,6 +438,48 @@ def test_rename_column():
 
     assert "A" not in df.columns
     assert "RenamedColumn" in df.columns
+
+
+def test_rolling():
+    """
+    - Rolling:
+        column_name: A
+        how: mean
+        window_size: 2
+        output_column: rolling_mean
+
+    - Rolling:
+        column_name: A
+        how: std
+        window_size: 2
+        output_column: rolling_std
+
+    - Rolling:
+        column_name: A
+        how: sum
+        window_size: 2
+        output_column: rolling_sum
+
+    - Rolling:
+        column_name: A
+        how: var
+        window_size: 2
+        output_column: rolling_var
+    """
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name="pipeline_Rolling")
+
+    df = generate_mock_df()
+    df = run_pipeline(df, config=config)
+
+    rolling_mean = df["A"].rolling(2).mean()
+    rolling_std = df["A"].rolling(2).std()
+    rolling_sum = df["A"].rolling(2).sum()
+    rolling_var = df["A"].rolling(2).var()
+
+    assert df["rolling_mean"].equals(rolling_mean)
+    assert df["rolling_std"].equals(rolling_std)
+    assert df["rolling_sum"].equals(rolling_sum)
+    assert df["rolling_var"].equals(rolling_var)
 
 
 def test_save_dataframe():

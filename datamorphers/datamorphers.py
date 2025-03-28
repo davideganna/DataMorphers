@@ -1,9 +1,9 @@
 import pandas as pd
-import json
-from typing import Any
 import narwhals as nw
-from narwhals.typing import IntoFrame
-import operator as python_standard_operator
+import json
+import operator
+from narwhals.typing import FrameT
+from typing import Any, Literal
 from datamorphers.base import DataMorpher
 
 
@@ -14,7 +14,7 @@ class CreateColumn(DataMorpher):
         self.value = value
 
     @nw.narwhalify
-    def _datamorph(self, df: IntoFrame) -> IntoFrame:
+    def _datamorph(self, df: FrameT) -> FrameT:
         """Adds a new column with a constant value to the dataframe."""
         df = df.with_columns(nw.lit(self.value).alias(self.column_name))
         return df
@@ -35,7 +35,7 @@ class CastColumnTypes(DataMorpher):
         self.cast_dict = cast_dict
 
     @nw.narwhalify
-    def _datamorph(self, df: IntoFrame) -> IntoFrame:
+    def _datamorph(self, df: FrameT) -> FrameT:
         """Casts columns in the DataFrame to specific column types."""
         df = df.with_columns(
             nw.col(i).cast(self.nw_map[c]) for i, c in self.cast_dict.items()
@@ -56,13 +56,13 @@ class ColumnsOperator(DataMorpher):
         self.output_column = output_column
 
     @nw.narwhalify
-    def _datamorph(self, df: IntoFrame) -> IntoFrame:
+    def _datamorph(self, df: FrameT) -> FrameT:
         """
         Performs an operation on the values in the specified column by
             the values inanother column.
         Renames the resulting column as 'output_column'.
         """
-        operation = getattr(python_standard_operator, self.logic)
+        operation = getattr(operator, self.logic)
         expr = operation(nw.col(self.first_column), (nw.col(self.second_column)))
         df = df.with_columns(expr.alias(self.output_column))
         return df
@@ -73,7 +73,7 @@ class DeleteDataFrame(DataMorpher):
         super().__init__()
         self.file_name = file_name if type(file_name) is list else [file_name]
 
-    def _datamorph(self, df: IntoFrame) -> IntoFrame:
+    def _datamorph(self, df: FrameT) -> FrameT:
         """
         Deletes a DataFrame (or a list of DataFrames) previously saved using pickle.
         """
@@ -86,13 +86,36 @@ class DeleteDataFrame(DataMorpher):
         return df
 
 
+class DropDuplicates(DataMorpher):
+    def __init__(self, subset: list | str = None, keep: str = "any"):
+        super().__init__()
+        if subset is None:
+            self.subset = None
+        elif isinstance(subset, list):
+            self.subset = subset
+        else:
+            self.subset = [subset]
+        self.keep = keep
+
+    @nw.narwhalify
+    def _datamorph(self, df: FrameT) -> FrameT:
+        """Drops duplicated rows."""
+        if self.subset:
+            # Drop duplicates only on a subset of columns
+            df = df.unique(subset=self.subset, keep=self.keep)
+        else:
+            # Drop duplicates on the entire DataFrame
+            df = df.unique()
+        return df
+
+
 class DropNA(DataMorpher):
     def __init__(self, column_name: str):
         super().__init__()
         self.column_name = column_name
 
     @nw.narwhalify
-    def _datamorph(self, df: IntoFrame) -> IntoFrame:
+    def _datamorph(self, df: FrameT) -> FrameT:
         """Drops rows with any NaN values."""
         df = df.drop_nulls(subset=self.column_name)
         return df
@@ -105,7 +128,7 @@ class FillNA(DataMorpher):
         self.value = value
 
     @nw.narwhalify
-    def _datamorph(self, df: IntoFrame) -> IntoFrame:
+    def _datamorph(self, df: FrameT) -> FrameT:
         """Fills NaN values in the specified column with the provided value."""
         df = df.with_columns(
             nw.when(nw.col(self.column_name).is_nan())
@@ -125,10 +148,10 @@ class FilterRows(DataMorpher):
         self.logic = logic
 
     @nw.narwhalify
-    def _datamorph(self, df: IntoFrame) -> IntoFrame:
+    def _datamorph(self, df: FrameT) -> FrameT:
         """Filters rows based on a condition in the specified column."""
-        operator = getattr(python_standard_operator, self.logic)
-        expr = operator(nw.col(self.first_column), nw.col(self.second_column))
+        operation = getattr(operator, self.logic)
+        expr = operation(nw.col(self.first_column), nw.col(self.second_column))
         df = df.filter(expr)
         return df
 
@@ -220,7 +243,7 @@ class RemoveColumns(DataMorpher):
         )
 
     @nw.narwhalify
-    def _datamorph(self, df: IntoFrame) -> IntoFrame:
+    def _datamorph(self, df: FrameT) -> FrameT:
         """Removes a specified column from the DataFrame."""
         df = df.drop(self.columns_name)
         return df
@@ -235,6 +258,37 @@ class RenameColumn(DataMorpher):
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """Renames a column in the dataframe."""
         df = df.rename(columns={self.old_column_name: self.new_column_name})
+        return df
+
+
+class Rolling(DataMorpher):
+    def __init__(
+        self,
+        *,
+        column_name: str,
+        how: Literal["mean", "std", "sum", "var"],
+        window_size: int,
+        output_column: str,
+    ):
+        super().__init__()
+        self.column_name = column_name
+        self.how = how
+        self.window_size = window_size
+        self.output_column = output_column
+
+    @nw.narwhalify
+    def _datamorph(self, df: FrameT):
+        """Computes rolling operation on a column."""
+        col = df.get_column(self.column_name)
+        if self.how == "mean":
+            rolling_col = col.rolling_mean(self.window_size)
+        elif self.how == "std":
+            rolling_col = col.rolling_std(self.window_size)
+        elif self.how == "sum":
+            rolling_col = col.rolling_sum(self.window_size)
+        elif self.how == "var":
+            rolling_col = col.rolling_var(self.window_size)
+        df = df.with_columns(rolling_col.alias(self.output_column))
         return df
 
 
@@ -262,7 +316,7 @@ class SelectColumns(DataMorpher):
         )
 
     @nw.narwhalify
-    def _datamorph(self, df: IntoFrame) -> IntoFrame:
+    def _datamorph(self, df: FrameT) -> FrameT:
         """Selects columns from the DataFrame."""
         df = df.select(self.columns_name)
         return df
