@@ -92,7 +92,7 @@ pipeline_FlatMultiIndex:
 pipeline_MathOperator:
   - MathOperator:
       column_name: A
-      logic: sum
+      logic: add
       value: 3
       output_column: sum_col
 
@@ -110,7 +110,7 @@ pipeline_MathOperator:
 
   - MathOperator:
       column_name: A
-      logic: div
+      logic: truediv
       value: 3
       output_column: div_col
 
