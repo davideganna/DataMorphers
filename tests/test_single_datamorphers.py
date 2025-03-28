@@ -2,6 +2,7 @@
 
 import pandas as pd
 import numpy as np
+import narwhals as nw
 from datamorphers.pipeline_loader import get_pipeline_config, run_pipeline
 
 import logging
@@ -69,10 +70,10 @@ def test_cast_columns_type():
     )
 
     df = generate_mock_df()
-    df = run_pipeline(df, config=config)
+    df = nw.from_native(run_pipeline(df, config=config))
 
-    assert isinstance(df["A"].dtype, type(np.dtype("float16")))
-    assert isinstance(df["C"].dtype, type(np.dtype("object")))
+    assert isinstance(df["A"].dtype, nw.Float32)
+    assert isinstance(df["C"].dtype, nw.String)
 
 
 def test_columns_operator():
@@ -252,7 +253,6 @@ def test_filter_rows():
         df = run_pipeline(df, config=config)
 
         res = df.loc[df["A"] >= df["B"]]
-
         assert df.equals(res)
 
     def _test_filter_rows_l():
