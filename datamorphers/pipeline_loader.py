@@ -1,11 +1,13 @@
-import yaml
 import logging
-import pandas as pd
-import datamorphers.datamorphers as datamorphers
-from datamorphers.base import DataMorpher
-from datamorphers import logger, custom_datamorphers
 from typing import Any
+
+import pandas as pd
+import yaml
 from narwhals.typing import IntoFrame
+
+import datamorphers.datamorphers as datamorphers
+from datamorphers import custom_datamorphers, logger
+from datamorphers.base import DataMorpher
 
 
 def get_pipeline_config(yaml_path: str, pipeline_name: str, **kwargs: dict) -> dict:
@@ -26,7 +28,8 @@ def get_pipeline_config(yaml_path: str, pipeline_name: str, **kwargs: dict) -> d
     # Add runtime evaluation of variables
     for k, v in kwargs.items():
         if isinstance(v, pd.DataFrame):
-            # Serialize the DataFrame, which will be deserialized in the specific DataMorpher.
+            # Serialize the DataFrame, which will be deserialized
+            #   in the specific DataMorpher.
             v = v.to_json()
         yaml_content = yaml_content.replace(f"${{{k}}}", str(v))
 
@@ -60,17 +63,17 @@ def log_pipeline_config(config: dict):
             logger.info(f"{4 * ' '}{arg}: {value}")
 
 
-def run_pipeline(df: IntoFrame, config: Any, debug: bool = False):
+def run_pipeline(df: IntoFrame, config: Any, debug: bool = False) -> IntoFrame:
     """
     Runs the pipeline on the DataFrame.
 
     Args:
-        df (pd.DataFrame): The input DataFrame to be transformed.
+        df (nw.IntoFrame): The input DataFrame to be transformed.
         config (Any): The pipeline configuration.
-        extra_dfs (dict, optional): Additional DataFrames required by some DataMorphers. Defaults to {}.
+        bebug (bool, default False): Whether to log addition debugging messages.
 
     Returns:
-        pd.DataFrame: The transformed DataFrame.
+        nw.IntoFrame: The transformed DataFrame.
     """
     # Get the custom logger
     logger = logging.getLogger("datamorphers")
@@ -115,5 +118,6 @@ def run_pipeline(df: IntoFrame, config: Any, debug: bool = False):
 
         except Exception as exc:
             logger.error(f"Error in {cls}: {exc}")
+            return None
 
     return df

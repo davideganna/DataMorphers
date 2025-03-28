@@ -1,11 +1,12 @@
 # pytest -s -v --disable-pytest-warnings
 
-import pandas as pd
-import numpy as np
-import narwhals as nw
-from datamorphers.pipeline_loader import get_pipeline_config, run_pipeline
-
 import logging
+
+import narwhals as nw
+import numpy as np
+import pandas as pd
+
+from datamorphers.pipeline_loader import get_pipeline_config, run_pipeline
 
 logging.basicConfig(
     level=logging.INFO,

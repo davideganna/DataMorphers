@@ -1,7 +1,8 @@
 # pytest -s -v --disable-pytest-warnings
 
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from datamorphers.pipeline_loader import get_pipeline_config, run_pipeline
 
 YAML_PATH = "tests/pipelines/test_pipeline.yaml"
