@@ -42,8 +42,6 @@ class ColumnsOperator(DataMorpher):
     def __init__(
         self, first_column: str, second_column: str, logic: str, output_column: str
     ):
-        """Logic can be sum, sub, mul, div."""
-
         super().__init__()
         self.first_column = first_column
         self.second_column = second_column
@@ -244,15 +242,15 @@ class RemoveColumns(DataMorpher):
         return df
 
 
-class RenameColumn(DataMorpher):
-    def __init__(self, old_column_name: str, new_column_name: str):
+class RenameColumns(DataMorpher):
+    def __init__(self, cols_mapping: dict):
         super().__init__()
-        self.old_column_name = old_column_name
-        self.new_column_name = new_column_name
+        self.cols_mapping = cols_mapping
 
+    @nw.narwhalify
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """Renames a column in the dataframe."""
-        df = df.rename(columns={self.old_column_name: self.new_column_name})
+        df = df.rename(self.cols_mapping)
         return df
 
 

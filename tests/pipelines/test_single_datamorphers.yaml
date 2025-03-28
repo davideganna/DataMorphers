@@ -134,10 +134,11 @@ pipeline_RemoveColumns:
         - B
         - C
 
-pipeline_RenameColumn:
-  - RenameColumn:
-      old_column_name: A
-      new_column_name: RenamedColumn
+pipeline_RenameColumns:
+  - RenameColumns:
+      cols_mapping:
+        A: A_remapped
+        B: B_remapped
 
 pipeline_Rolling:
   - Rolling:

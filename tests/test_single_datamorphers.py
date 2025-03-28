@@ -427,21 +427,24 @@ def test_remove_columns():
     assert "C" not in df.columns
 
 
-def test_rename_column():
+def test_rename_columns():
     """
-    - RenameColumn:
-        old_column_name: ToRename
-        new_columnName: RenamedColumn
+    - RenameColumns:
+        cols_mapping:
+            A: A_remapped
+            B: B_remapped
     """
     config = get_pipeline_config(
-        yaml_path=YAML_PATH, pipeline_name="pipeline_RenameColumn"
+        yaml_path=YAML_PATH, pipeline_name="pipeline_RenameColumns"
     )
 
     df = generate_mock_df()
     df = run_pipeline(df, config=config)
 
     assert "A" not in df.columns
-    assert "RenamedColumn" in df.columns
+    assert "B" not in df.columns
+    assert "A_remapped" in df.columns
+    assert "B_remapped" in df.columns
 
 
 def test_rolling():
