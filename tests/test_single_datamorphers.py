@@ -70,10 +70,14 @@ def test_cast_columns_type():
     )
 
     df = generate_mock_df()
+    df["Date"] = df.shape[0] * ["01-01-2000"]
+    df["DateTime"] = df.shape[0] * ["01-01-2000 00:00:00"]
     df = nw.from_native(run_pipeline(df, config=config))
 
     assert isinstance(df["A"].dtype, nw.Float32)
     assert isinstance(df["C"].dtype, nw.String)
+    assert isinstance(df["Date"].dtype, nw.Date)
+    assert isinstance(df["DateTime"].dtype, nw.Datetime)
 
 
 def test_columns_operator():
@@ -423,21 +427,24 @@ def test_remove_columns():
     assert "C" not in df.columns
 
 
-def test_rename_column():
+def test_rename_columns():
     """
-    - RenameColumn:
-        old_column_name: ToRename
-        new_columnName: RenamedColumn
+    - RenameColumns:
+        cols_mapping:
+            A: A_remapped
+            B: B_remapped
     """
     config = get_pipeline_config(
-        yaml_path=YAML_PATH, pipeline_name="pipeline_RenameColumn"
+        yaml_path=YAML_PATH, pipeline_name="pipeline_RenameColumns"
     )
 
     df = generate_mock_df()
     df = run_pipeline(df, config=config)
 
     assert "A" not in df.columns
-    assert "RenamedColumn" in df.columns
+    assert "B" not in df.columns
+    assert "A_remapped" in df.columns
+    assert "B_remapped" in df.columns
 
 
 def test_rolling():

@@ -1,4 +1,5 @@
 import pandas as pd
+import pyarrow as pa
 import narwhals as nw
 import json
 import operator
@@ -8,7 +9,7 @@ from datamorphers.base import DataMorpher
 
 
 class CreateColumn(DataMorpher):
-    def __init__(self, column_name: str, value: int):
+    def __init__(self, *, column_name: str, value: Any):
         super().__init__()
         self.column_name = column_name
         self.value = value
@@ -21,34 +22,26 @@ class CreateColumn(DataMorpher):
 
 
 class CastColumnTypes(DataMorpher):
-    # Once Nw will support python datatypes we will get rid of this ugly mapping
-    nw_map = {
-        "float32": nw.Float32,
-        "float64": nw.Float64,
-        "int16": nw.Int16,
-        "int32": nw.Int32,
-        "str": nw.String,
-    }
-
-    def __init__(self, cast_dict: dict):
+    def __init__(self, *, cast_dict: dict):
         super().__init__()
         self.cast_dict = cast_dict
 
     @nw.narwhalify
     def _datamorph(self, df: FrameT) -> FrameT:
         """Casts columns in the DataFrame to specific column types."""
+        from datamorphers.constants import SUPPORTED_TYPE_MAPPING
+
         df = df.with_columns(
-            nw.col(i).cast(self.nw_map[c]) for i, c in self.cast_dict.items()
+            nw.col(i).cast(SUPPORTED_TYPE_MAPPING[c]) for i, c in self.cast_dict.items()
         )
+
         return df
 
 
 class ColumnsOperator(DataMorpher):
     def __init__(
-        self, first_column: str, second_column: str, logic: str, output_column: str
+        self, *, first_column: str, second_column: str, logic: str, output_column: str
     ):
-        """Logic can be sum, sub, mul, div."""
-
         super().__init__()
         self.first_column = first_column
         self.second_column = second_column
@@ -63,13 +56,15 @@ class ColumnsOperator(DataMorpher):
         Renames the resulting column as 'output_column'.
         """
         operation = getattr(operator, self.logic)
-        expr = operation(nw.col(self.first_column), (nw.col(self.second_column)))
+        expr: nw.Expr = operation(
+            nw.col(self.first_column), (nw.col(self.second_column))
+        )
         df = df.with_columns(expr.alias(self.output_column))
         return df
 
 
 class DeleteDataFrame(DataMorpher):
-    def __init__(self, file_name: list | str):
+    def __init__(self, *, file_name: list | str):
         super().__init__()
         self.file_name = file_name if type(file_name) is list else [file_name]
 
@@ -110,7 +105,7 @@ class DropDuplicates(DataMorpher):
 
 
 class DropNA(DataMorpher):
-    def __init__(self, column_name: str):
+    def __init__(self, *, column_name: str):
         super().__init__()
         self.column_name = column_name
 
@@ -122,7 +117,7 @@ class DropNA(DataMorpher):
 
 
 class FillNA(DataMorpher):
-    def __init__(self, column_name: str, value: Any):
+    def __init__(self, *, column_name: str, value: Any):
         super().__init__()
         self.column_name = column_name
         self.value = value
@@ -151,7 +146,7 @@ class FilterRows(DataMorpher):
     def _datamorph(self, df: FrameT) -> FrameT:
         """Filters rows based on a condition in the specified column."""
         operation = getattr(operator, self.logic)
-        expr = operation(nw.col(self.first_column), nw.col(self.second_column))
+        expr: nw.Expr = operation(nw.col(self.first_column), nw.col(self.second_column))
         df = df.filter(expr)
         return df
 
@@ -162,9 +157,10 @@ class FlatMultiIndex(DataMorpher):
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """
+        Pandas only.
+
         Flattens the multi-index columns, leaving intact single index columns.
         After being flattened, the columns will be joined by an underscore.
-        Pandas only
 
         Example:
             Before:
@@ -179,7 +175,9 @@ class FlatMultiIndex(DataMorpher):
 
 
 class MathOperator(DataMorpher):
-    def __init__(self, column_name: str, logic: str, value: float, output_column: str):
+    def __init__(
+        self, *, column_name: str, logic: str, value: float, output_column: str
+    ):
         """Logic can be sum, sub, mul, div."""
         super().__init__()
         self.column_name = column_name
@@ -187,16 +185,12 @@ class MathOperator(DataMorpher):
         self.value = value
         self.output_column = output_column
 
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+    @nw.narwhalify
+    def _datamorph(self, df: FrameT) -> FrameT:
         """Math operation between a column and a value, with the operation defined in logic."""
-        if self.logic == "sum":
-            df[self.output_column] = df[self.column_name] + self.value
-        elif self.logic == "sub":
-            df[self.output_column] = df[self.column_name] - self.value
-        elif self.logic == "mul":
-            df[self.output_column] = df[self.column_name] * self.value
-        elif self.logic == "div":
-            df[self.output_column] = df[self.column_name] / self.value
+        operation = getattr(operator, self.logic)
+        expr: nw.Expr = operation(nw.col(self.column_name), self.value)
+        df = df.with_columns(expr.alias(self.output_column))
         return df
 
 
@@ -249,15 +243,15 @@ class RemoveColumns(DataMorpher):
         return df
 
 
-class RenameColumn(DataMorpher):
-    def __init__(self, old_column_name: str, new_column_name: str):
+class RenameColumns(DataMorpher):
+    def __init__(self, *, cols_mapping: dict):
         super().__init__()
-        self.old_column_name = old_column_name
-        self.new_column_name = new_column_name
+        self.cols_mapping = cols_mapping
 
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+    @nw.narwhalify
+    def _datamorph(self, df: FrameT) -> FrameT:
         """Renames a column in the dataframe."""
-        df = df.rename(columns={self.old_column_name: self.new_column_name})
+        df = df.rename(self.cols_mapping)
         return df
 
 
@@ -299,6 +293,8 @@ class SaveDataFrame(DataMorpher):
 
     def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
         """
+        Pandas only.
+
         Saves a DataFrame using pickle.
 
         If you wish to later remove the pickle file, call 'DeleteDataFrame'

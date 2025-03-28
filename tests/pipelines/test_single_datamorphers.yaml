@@ -8,6 +8,8 @@ pipeline_CastColumnTypes:
       cast_dict:
         A: float32
         C: str
+        Date: date
+        DateTime: datetime
 
 pipeline_ColumnsOperator:
   - ColumnsOperator:
@@ -90,7 +92,7 @@ pipeline_FlatMultiIndex:
 pipeline_MathOperator:
   - MathOperator:
       column_name: A
-      logic: sum
+      logic: add
       value: 3
       output_column: sum_col
 
@@ -108,7 +110,7 @@ pipeline_MathOperator:
 
   - MathOperator:
       column_name: A
-      logic: div
+      logic: truediv
       value: 3
       output_column: div_col
 
@@ -132,10 +134,11 @@ pipeline_RemoveColumns:
         - B
         - C
 
-pipeline_RenameColumn:
-  - RenameColumn:
-      old_column_name: A
-      new_column_name: RenamedColumn
+pipeline_RenameColumns:
+  - RenameColumns:
+      cols_mapping:
+        A: A_remapped
+        B: B_remapped
 
 pipeline_Rolling:
   - Rolling:
