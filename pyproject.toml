@@ -4,16 +4,23 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "datamorphers"
-version = "1.0.3"
+version = "1.0.4"
 description = "Flexible framework for transforming Pandas DataFrames using a modular pipeline approach."
 authors = [
     { name = "Davide Ganna", email = "ganna.davide@hotmail.it" }
 ]
 license = { text = "MIT" }
 readme = "README.md"
+dependencies = [
+    "black==25.1.0",
+    "lxml==5.3.1",
+    "narwhals==1.32.0",
+    "pandas==2.2.3",
+    "pre_commit==4.1.0",
+    "pyarrow==19.0.1",
+    "PyYAML==6.0.2",
+    "pytest==8.3.4",
+]
 
 [tool.setuptools]
 packages = ["datamorphers"]
-
-[tool.setuptools.dynamic]
-dependencies = { file = ["requirements.txt"] }
