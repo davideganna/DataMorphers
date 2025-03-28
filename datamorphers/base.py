@@ -1,6 +1,5 @@
-import pandas as pd
-import logging
 from abc import ABC, abstractmethod
+
 from narwhals.typing import FrameT
 
 

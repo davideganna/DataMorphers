@@ -1,12 +1,13 @@
-import yaml
 import logging
-import pandas as pd
-import narwhals as nw
-import datamorphers.datamorphers as datamorphers
-from datamorphers.base import DataMorpher
-from datamorphers import logger, custom_datamorphers
 from typing import Any
+
+import pandas as pd
+import yaml
 from narwhals.typing import IntoFrame
+
+import datamorphers.datamorphers as datamorphers
+from datamorphers import custom_datamorphers, logger
+from datamorphers.base import DataMorpher
 
 
 def get_pipeline_config(yaml_path: str, pipeline_name: str, **kwargs: dict) -> dict:
@@ -27,7 +28,8 @@ def get_pipeline_config(yaml_path: str, pipeline_name: str, **kwargs: dict) -> d
     # Add runtime evaluation of variables
     for k, v in kwargs.items():
         if isinstance(v, pd.DataFrame):
-            # Serialize the DataFrame, which will be deserialized in the specific DataMorpher.
+            # Serialize the DataFrame, which will be deserialized
+            #   in the specific DataMorpher.
             v = v.to_json()
         yaml_content = yaml_content.replace(f"${{{k}}}", str(v))
 

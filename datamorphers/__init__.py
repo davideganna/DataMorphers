@@ -1,5 +1,5 @@
-import logging
 import importlib
+import logging
 
 __all__ = ["custom_datamorphers", "logger"]
 
@@ -32,7 +32,8 @@ def load_custom_datamorphers():
         logger.info("Successfully imported module custom_datamorphers.")
     except ModuleNotFoundError:
         logger.info(
-            "Module custom_datamorphers not found. Custom DataMorphers implementations will not be loaded.\n"
+            "Module custom_datamorphers not found. "
+            "Custom DataMorphers implementations will not be loaded.\n"
         )
         custom_datamorphers = None
     return custom_datamorphers
