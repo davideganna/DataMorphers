@@ -73,7 +73,8 @@ def test_cast_columns_type():
     df = generate_mock_df()
     df["Date"] = df.shape[0] * ["01-01-2000"]
     df["DateTime"] = df.shape[0] * ["01-01-2000 00:00:00"]
-    df = nw.from_native(run_pipeline(df, config=config))
+    # df = nw.from_native(run_pipeline(df, config=config))
+    df = run_pipeline(df, config=config)
 
     assert isinstance(df["A"].dtype, nw.Float32)
     assert isinstance(df["C"].dtype, nw.String)

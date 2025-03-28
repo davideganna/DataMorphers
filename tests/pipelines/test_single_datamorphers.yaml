@@ -109,9 +109,9 @@ pipeline_RemoveColumns:
         - B
         - C
 
-pipeline_RenameColumn:
+pipeline_RenameColumns:
   - RenameColumns:
-      rename_map: {'A': 'RenamedColumn'}
+      rename_map: {'A': 'A_remapped', 'B': 'B_remapped'}
 
 
 pipeline_Rolling:
