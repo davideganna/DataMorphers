@@ -1,5 +1,6 @@
 import json
 import operator
+from narwhals.typing import IntoFrame, IntoFrame
 from typing import Any, Literal
 
 import narwhals as nw
@@ -16,7 +17,7 @@ class CreateColumn(DataMorpher):
         self.value = value
 
     @nw.narwhalify
-    def _datamorph(self, df: FrameT) -> FrameT:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Adds a new column with a constant value to the dataframe."""
         df = df.with_columns(nw.lit(self.value).alias(self.column_name))
         return df
@@ -28,7 +29,7 @@ class CastColumnTypes(DataMorpher):
         self.cast_dict = cast_dict
 
     @nw.narwhalify
-    def _datamorph(self, df: FrameT) -> FrameT:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Casts columns in the DataFrame to specific column types."""
         from datamorphers.constants import SUPPORTED_TYPE_MAPPING
 
@@ -50,7 +51,7 @@ class ColumnsOperator(DataMorpher):
         self.output_column = output_column
 
     @nw.narwhalify
-    def _datamorph(self, df: FrameT) -> FrameT:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """
         Performs an operation on the values in the specified column by
             the values inanother column.
@@ -69,7 +70,7 @@ class DeleteDataFrame(DataMorpher):
         super().__init__()
         self.file_name = file_name if type(file_name) is list else [file_name]
 
-    def _datamorph(self, df: FrameT) -> FrameT:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """
         Deletes a DataFrame (or a list of DataFrames) previously saved using pickle.
         """
@@ -94,7 +95,7 @@ class DropDuplicates(DataMorpher):
         self.keep = keep
 
     @nw.narwhalify
-    def _datamorph(self, df: FrameT) -> FrameT:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Drops duplicated rows."""
         if self.subset:
             # Drop duplicates only on a subset of columns
@@ -111,7 +112,7 @@ class DropNA(DataMorpher):
         self.column_name = column_name
 
     @nw.narwhalify
-    def _datamorph(self, df: FrameT) -> FrameT:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Drops rows with any NaN values."""
         df = df.drop_nulls(subset=self.column_name)
         return df
@@ -124,7 +125,7 @@ class FillNA(DataMorpher):
         self.value = value
 
     @nw.narwhalify
-    def _datamorph(self, df: FrameT) -> FrameT:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Fills NaN values in the specified column with the provided value."""
         df = df.with_columns(
             nw.when(nw.col(self.column_name).is_nan())
@@ -144,7 +145,7 @@ class FilterRows(DataMorpher):
         self.logic = logic
 
     @nw.narwhalify
-    def _datamorph(self, df: FrameT) -> FrameT:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Filters rows based on a condition in the specified column."""
         operation = getattr(operator, self.logic)
         expr: nw.Expr = operation(nw.col(self.first_column), nw.col(self.second_column))
@@ -176,22 +177,20 @@ class FlatMultiIndex(DataMorpher):
 
 
 class MergeDataFrames(DataMorpher):
-    def __init__(self, df_to_join: dict, join_cols: list, how: str, suffixes: list):
+    def __init__(self, df_to_join: dict, join_cols: list, how: str, suffixes: str):
         super().__init__()
-        # Deserialize the DataFrame
-        self.df_to_join = pd.read_json(json.dumps(df_to_join))
+        # Deserialize the DataFrame and narwhalized
+        self.df_to_join = nw.from_native(pd.read_json(json.dumps(df_to_join)))
         self.join_cols = join_cols
         self.how = how
         self.suffixes = suffixes
 
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+    @nw.narwhalify
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Merges two DataFrames."""
-        merged_df = pd.merge(
-            df,
-            self.df_to_join,
-            on=self.join_cols,
-            how=self.how,
-            suffixes=self.suffixes,
+
+        merged_df = df.join(
+            self.df_to_join, on=self.join_cols, how=self.how, suffix=self.suffixes
         )
         return merged_df
 
@@ -202,11 +201,17 @@ class NormalizeColumn(DataMorpher):
         self.column_name = column_name
         self.output_column = output_column
 
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
+    @nw.narwhalify
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Normalize a numerical column in the dataframe using Z-score normalization."""
-        df[self.output_column] = (
-            df[self.column_name] - df[self.column_name].mean()
-        ) / df[self.column_name].std()
+
+        df = df.with_columns(
+            (
+                (nw.col(self.column_name) - nw.col(self.column_name).mean())
+                / nw.col(self.column_name).std()
+            ).alias(self.output_column)
+        )
+
         return df
 
 
@@ -218,21 +223,21 @@ class RemoveColumns(DataMorpher):
         )
 
     @nw.narwhalify
-    def _datamorph(self, df: FrameT) -> FrameT:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Removes a specified column from the DataFrame."""
         df = df.drop(self.columns_name)
         return df
 
 
 class RenameColumns(DataMorpher):
-    def __init__(self, *, cols_mapping: dict):
+    def __init__(self, rename_map: dict):
         super().__init__()
-        self.cols_mapping = cols_mapping
+        self.rename_map = rename_map
 
     @nw.narwhalify
-    def _datamorph(self, df: FrameT) -> FrameT:
-        """Renames a column in the dataframe."""
-        df = df.rename(self.cols_mapping)
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
+        """Renames columns in the dataframe."""
+        df = df.rename(self.rename_map)
         return df
 
 
@@ -252,7 +257,7 @@ class Rolling(DataMorpher):
         self.output_column = output_column
 
     @nw.narwhalify
-    def _datamorph(self, df: FrameT):
+    def _datamorph(self, df: IntoFrame):
         """Computes rolling operation on a column."""
         col = df.get_column(self.column_name)
         if self.how == "mean":
@@ -293,7 +298,7 @@ class SelectColumns(DataMorpher):
         )
 
     @nw.narwhalify
-    def _datamorph(self, df: FrameT) -> FrameT:
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Selects columns from the DataFrame."""
         df = df.select(self.columns_name)
         return df
