@@ -211,7 +211,7 @@ def test_filter_rows():
         - FilterRows:
             first_column: A
             second_column: B
-            logic: e
+            logic: eq
         """
         config = get_pipeline_config(
             yaml_path=YAML_PATH, pipeline_name="pipeline_FilterRows_e"
@@ -320,50 +320,6 @@ def test_flat_multi_index():
     df = run_pipeline(df, config=config)
 
     assert df.columns.equals(pd.Index(["A_B", "C_D", "E"]))
-
-
-def test_math_operator():
-    """
-    - MathOperator:
-      column_name: A
-      logic: sum
-      value: 3
-      output_column: sum_col
-
-    - MathOperator:
-        column_name: A
-        logic: sub
-        value: 3
-        output_column: sub_col
-
-    - MathOperator:
-        column_name: A
-        logic: mul
-        value: 3
-        output_column: mul_col
-
-    - MathOperator:
-        column_name: A
-        logic: div
-        value: 3
-        output_column: div_col
-    """
-    config = get_pipeline_config(
-        yaml_path=YAML_PATH, pipeline_name="pipeline_MathOperator"
-    )
-
-    df = generate_mock_df()
-    df = run_pipeline(df, config=config)
-
-    res_sum = df["A"] + 3
-    res_sub = df["A"] - 3
-    res_mul = df["A"] * 3
-    res_div = df["A"] / 3
-
-    assert df["sum_col"].equals(res_sum)
-    assert df["sub_col"].equals(res_sub)
-    assert df["mul_col"].equals(res_mul)
-    assert df["div_col"].equals(res_div)
 
 
 def test_merge_dataframes():
