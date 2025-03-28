@@ -1,4 +1,5 @@
 import pandas as pd
+import pyarrow as pa
 import narwhals as nw
 import json
 import operator
@@ -21,15 +22,6 @@ class CreateColumn(DataMorpher):
 
 
 class CastColumnTypes(DataMorpher):
-    # Once Nw will support python datatypes we will get rid of this ugly mapping
-    nw_map = {
-        "float32": nw.Float32,
-        "float64": nw.Float64,
-        "int16": nw.Int16,
-        "int32": nw.Int32,
-        "str": nw.String,
-    }
-
     def __init__(self, cast_dict: dict):
         super().__init__()
         self.cast_dict = cast_dict
@@ -37,9 +29,12 @@ class CastColumnTypes(DataMorpher):
     @nw.narwhalify
     def _datamorph(self, df: FrameT) -> FrameT:
         """Casts columns in the DataFrame to specific column types."""
+        from datamorphers.constants import SUPPORTED_TYPE_MAPPING
+
         df = df.with_columns(
-            nw.col(i).cast(self.nw_map[c]) for i, c in self.cast_dict.items()
+            nw.col(i).cast(SUPPORTED_TYPE_MAPPING[c]) for i, c in self.cast_dict.items()
         )
+
         return df
 
 

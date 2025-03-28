@@ -8,6 +8,8 @@ pipeline_CastColumnTypes:
       cast_dict:
         A: float32
         C: str
+        Date: date
+        DateTime: datetime
 
 pipeline_ColumnsOperator:
   - ColumnsOperator:
