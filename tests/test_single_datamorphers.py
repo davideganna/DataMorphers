@@ -329,7 +329,7 @@ def test_merge_dataframes():
         df_to_join: ${second_df}
         join_cols: ['A', 'B']
         how: inner
-        suffixes: ['_1', '_2']
+        suffix: '1'
     """
     df = generate_mock_df()
     second_df = generate_mock_df()
@@ -341,8 +341,8 @@ def test_merge_dataframes():
 
     df = run_pipeline(df, config=config)
 
-    assert "C_1" in df.columns
-    assert "C_2" in df.columns
+    assert "C" in df.columns
+    assert "C1" in df.columns
 
 
 def test_normalize_column():

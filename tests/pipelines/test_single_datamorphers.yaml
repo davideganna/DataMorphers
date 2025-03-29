@@ -94,7 +94,7 @@ pipeline_MergeDataFrames:
       df_to_join: ${second_df}
       join_cols: [A, B]
       how: inner
-      suffixes: [_1, _2]
+      suffixes: '1'
 
 pipeline_NormalizeColumn:
   - NormalizeColumn:
@@ -111,9 +111,8 @@ pipeline_RemoveColumns:
 
 pipeline_RenameColumns:
   - RenameColumns:
-      cols_mapping:
-        A: A_remapped
-        B: B_remapped
+      rename_map: {'A': 'A_remapped', 'B': 'B_remapped'}
+
 
 pipeline_Rolling:
   - Rolling:
