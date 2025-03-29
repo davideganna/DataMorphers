@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "datamorphers"
-version = "1.0.4"
-description = "Flexible framework for transforming Pandas DataFrames using a modular pipeline approach."
+version = "1.0.5"
+description = "Flexible framework for transforming Pandas and Polars DataFrames using a modular data pipeline approach."
 authors = [
     { name = "Davide Ganna", email = "ganna.davide@hotmail.it" }
 ]
