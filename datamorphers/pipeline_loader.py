@@ -135,7 +135,7 @@ def run_pipeline(df: IntoFrame, config: Any, debug: bool = False) -> IntoFrame:
     Args:
         df (nw.IntoFrame): The input DataFrame to be transformed.
         config (Any): The pipeline configuration.
-        bebug (bool, default False): Whether to log addition debugging messages.
+        debug (bool, default False): Whether to log additional debugging messages.
 
     Returns:
         nw.IntoFrame: The transformed DataFrame.
@@ -149,40 +149,21 @@ def run_pipeline(df: IntoFrame, config: Any, debug: bool = False) -> IntoFrame:
     # Display pipeline configuration
     log_pipeline_config(config)
 
-    # Define the single DataMorpher inside a list of DataMorphers
-    _dm: dict | str
+    # Process each step in the pipeline
+    for step in config[config["pipeline_name"]]:
+        cls, args = list(step.items())[0] if isinstance(step, dict) else (step, {})
 
-    for _dm in config[f"{config['pipeline_name']}"]:
-        if isinstance(_dm, dict):
-            cls, args = list(_dm.items())[0]
+        # Get the DataMorpher class
+        module = getattr(custom_datamorphers, cls, None) or getattr(datamorphers, cls)
+        datamorpher_cls: DataMorpher = module
 
-        elif isinstance(_dm, str):
-            cls, args = _dm, {}
+        # Instantiate the DataMorpher object
+        datamorpher: DataMorpher = datamorpher_cls(**args)
 
-        try:
-            # Try getting the class from custom datamorphers first so that
-            #   custom DataMorphers override default ones.
-            if custom_datamorphers and hasattr(custom_datamorphers, cls):
-                module = custom_datamorphers
-            elif hasattr(datamorphers, cls):
-                module = datamorphers
-            else:
-                raise ValueError(f"Unknown DataMorpher: {cls}")
+        # Transform the DataFrame
+        df = datamorpher._datamorph(df)
 
-            # Get the DataMorpher class
-            datamorpher_cls: DataMorpher = getattr(module, cls)
-
-            # Instantiate the DataMorpher object with the updated args.
-            datamorpher: DataMorpher = datamorpher_cls(**args)
-
-            # Transform the DataFrame.
-            df = datamorpher._datamorph(df)
-
-            # Log the shape of the DataFrame after each transformation
-            logger.debug(f"DataFrame shape after {cls}: {df.shape}")
-
-        except Exception as exc:
-            logger.error(f"Error in {cls}: {exc}")
-            return None
+        # Log the shape of the DataFrame after each transformation
+        logger.debug(f"DataFrame shape after {cls}: {df.shape}")
 
     return df

@@ -40,6 +40,14 @@ def test_missing_pipeline_name(mock_fillna):
         validate_pipeline_config(config)
 
 
+def test_invalid_pipeline_step():
+    """Test that an invalid pipeline step format raises an error."""
+    config = {"pipeline_name": "test_pipeline", "test_pipeline": [123]}
+
+    with pytest.raises(ValueError, match="Invalid pipeline step format: 123"):
+        validate_pipeline_config(config)
+
+
 def test_missing_required_argument(mock_fillna):
     """Test that missing required arguments raises an error."""
     config = {
