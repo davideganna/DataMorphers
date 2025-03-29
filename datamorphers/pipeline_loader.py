@@ -1,4 +1,5 @@
 import logging
+import inspect
 from typing import Any
 
 import pandas as pd
@@ -36,7 +37,71 @@ def get_pipeline_config(yaml_path: str, pipeline_name: str, **kwargs: dict) -> d
     config = yaml.safe_load(yaml_content)
     config["pipeline_name"] = pipeline_name
 
+    validate_pipeline_config(config)
+
     return config
+
+
+def validate_pipeline_config(config: dict):
+    """
+    Validates the pipeline configuration before execution.
+
+    Ensures that:
+    - The pipeline has a valid name.
+    - Each DataMorpher exists.
+    - Required arguments are present.
+    - No extra arguments are provided.
+
+    Args:
+        config (dict): The pipeline configuration dictionary.
+
+    Raises:
+        ValueError: If any validation issue is found.
+    """
+    if "pipeline_name" not in config:
+        raise ValueError("Missing 'pipeline_name' in pipeline configuration.")
+
+    for step in config.get(config["pipeline_name"], []):
+        if isinstance(step, dict):
+            cls, args = list(step.items())[0]
+        elif isinstance(step, str):
+            cls, args = step, {}
+        else:
+            raise ValueError(f"Invalid pipeline step format: {step}")
+
+        # Check if the DataMorpher class exists
+        module = (
+            custom_datamorphers
+            if hasattr(custom_datamorphers, cls)
+            else datamorphers
+            if hasattr(datamorphers, cls)
+            else None
+        )
+        if not module:
+            raise ValueError(f"Unknown DataMorpher: {cls}")
+
+        datamorpher_cls = getattr(module, cls)
+
+        # Get all parameters from the __init__ method
+        signature = inspect.signature(datamorpher_cls.__init__)
+        defined_args = [param for param in signature.parameters if param != "self"]
+
+        # Required arguments (without default values)
+        required_args = [
+            param
+            for param, details in signature.parameters.items()
+            if details.default == inspect.Parameter.empty and param != "self"
+        ]
+
+        # Check for missing arguments
+        missing_args = [arg for arg in required_args if arg not in args]
+        if missing_args:
+            raise ValueError(f"Missing required arguments for {cls}: {missing_args}")
+
+        # Check for unexpected (extra) arguments
+        extra_args = [arg for arg in args if arg not in defined_args]
+        if extra_args:
+            raise ValueError(f"Unexpected arguments for {cls}: {extra_args}")
 
 
 def log_pipeline_config(config: dict):
