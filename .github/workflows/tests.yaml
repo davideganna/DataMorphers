@@ -26,11 +26,8 @@ jobs:
       - name: Install package
         run: pip install -e .
 
-      - name: Run Ruff
-        run: ruff format --check .
-
-      - name: Run Ruff Fix
-        run: ruff format .
+      - name: Run Ruff Linter
+        run: ruff check .
 
       - name: Run tests with coverage
         run: pytest -v --disable-pytest-warnings --cov=datamorphers --cov-report=xml
