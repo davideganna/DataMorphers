@@ -20,7 +20,7 @@ By leveraging DataMorphers, your pipelines become cleaner, more scalable and eas
 - Modular and extensible transformation framework.
 - Easily configurable via YAML files.
 - Supports multiple transformations, alphabetically ordered here (more to come!):
-  - [CreateColumn](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L7)
+  - [Find CreateColumn](https://github.com/davideganna/DataMorphers/search?q=class+CreateColumn&type=code)
   - [CastColumnTypes](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L19)
   - [ColumnsOperator](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L30)
   - [DropDuplicates](https://github.com/davideganna/DataMorphers/blob/f2f0d986ce6753e9069bb95cc357b8ff3fd2aea6/datamorphers/datamorphers.py#L78C7-L78C21)
