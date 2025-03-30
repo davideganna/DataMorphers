@@ -17,8 +17,7 @@ By leveraging DataMorphers, your pipelines become cleaner, more scalable and eas
 
 ## Features
 
-- Modular and extensible transformation framework.
-- Easily configurable via YAML files.
+- Modular and extensible transformation framework to design data pipelines, easily configurable from YAML files.
 - Supports multiple transformations, alphabetically ordered here (more to come!):
   - [CreateColumn](https://github.com/davideganna/DataMorphers/search?q=class+CreateColumn&type=code)
   - [CastColumnTypes](https://github.com/davideganna/DataMorphers/search?q=class+CastColumnTypes&type=code)
@@ -38,6 +37,7 @@ By leveraging DataMorphers, your pipelines become cleaner, more scalable and eas
   - [SelectColumns](https://github.com/davideganna/DataMorphers/search?q=class+SelectColumns&type=code)
 
 - Supports custom transformations, defined by the user.
+- Supports storing and retrieving objects throughout the entire application lifecycle, by leveraging [DataMorphersStorage](https://github.com/davideganna/DataMorphers/search?q=class+DataMorphersStorage&type=code)
 
 ## Installation
 
@@ -239,6 +239,44 @@ df_transformed = run_pipeline(df, config)
 ```
 
 If a custom module is provided, your custom transformations will be used instead of (or in addition to) the built-in ones.
+
+---
+
+## Storing and retrieving objects through `DataMorphersStorage`
+
+DataMorphers provides a Singleton-Based, In-Memory Key-Value Storage, called `DataMorphersStorage`.
+
+This is a singleton-based, in-memory key-value storage designed for shared access across multiple modules in a Python application. It ensures that only one instance of the storage exists, maintaining a persistent cache across imports.
+
+Features:
+
+- In-Memory Storage – Stores data without relying on external databases.
+
+- Logging Support – Integrates with the `datamorphers.logger` module for logging.
+
+- Cache Persistence – Retains stored data across module imports.
+
+- Utility Methods – Includes `set()`, `get()`, `isin()`, `list_keys()`, and `clear()`.
+
+### Usage
+
+Import the `DataMorphersStorage` instance
+
+```python
+from datamorphers.storage import dms
+```
+
+Store an object:
+
+```python
+dms.set("df_transformed", df_transformed)
+```
+
+Retrieve an object:
+
+```python
+df_transformed = dms.get("df")
+```
 
 ---
 

@@ -1,9 +1,11 @@
 import json
 import operator
-from narwhals.typing import IntoFrame
 from typing import Any, Literal
+
 import narwhals as nw
 import pandas as pd
+from narwhals.typing import IntoFrame
+
 from datamorphers.base import DataMorpher
 
 
@@ -28,7 +30,7 @@ class CastColumnTypes(DataMorpher):
     @nw.narwhalify
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Casts columns in the DataFrame to specific column types."""
-        from datamorphers.constants import SUPPORTED_TYPE_MAPPING
+        from datamorphers.constants.constants import SUPPORTED_TYPE_MAPPING
 
         expr = [
             nw.col(i).cast(SUPPORTED_TYPE_MAPPING[c]) for i, c in self.cast_dict.items()
