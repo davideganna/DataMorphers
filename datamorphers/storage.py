@@ -1,4 +1,4 @@
-from typing import Dict, Any, Self
+from typing import Any, Self
 
 from datamorphers import logger
 
@@ -69,7 +69,8 @@ class DataMorphersStorage:
         if key not in self.cache:
             available_keys = self.list_keys()
             raise KeyError(
-                f"{self.logger_msg} Key '{key}' not found. Available keys are: {available_keys}"
+                f"{self.logger_msg} Key '{key}' not found. "
+                f"Available keys are: {available_keys}"
             )
         return self.cache[key]
 
@@ -86,8 +87,8 @@ class DataMorphersStorage:
             )
         if key in self.cache:
             logger.warning(
-                f"{self.logger_msg} Attention! Key '{key}' is already present in DataMorphersStorage. "
-                "The item will be overwritten."
+                f"{self.logger_msg} Attention! Key '{key}' is already present "
+                "in DataMorphersStorage. The item will be overwritten."
             )
         logger.info(f"{self.logger_msg} Setting an object with key: {key}.")
         self.cache[key] = value

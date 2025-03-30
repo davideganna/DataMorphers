@@ -12,6 +12,7 @@ authors = [
 license = { text = "MIT" }
 readme = "README.md"
 dependencies = [
+    "black==22.10.0",
     "lxml==5.3.1",
     "narwhals==1.32.0",
     "pandas==2.2.3",
