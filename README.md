@@ -11,7 +11,7 @@
 
 ## Overview
 
-DataMorphers is a Python library that provides a flexible framework for transforming Pandas DataFrames using a modular data pipeline approach. Transformations are defined in a YAML configuration, and are applied sequentially to your dataset.
+DataMorphers is a Python library that provides a flexible framework for transforming Pandas and Polars DataFrames using a modular data pipeline approach. Transformations are defined in a YAML configuration, and are applied sequentially to your dataset.
 
 By leveraging DataMorphers, your pipelines become cleaner, more scalable and easier to debug.
 
@@ -20,22 +20,23 @@ By leveraging DataMorphers, your pipelines become cleaner, more scalable and eas
 - Modular and extensible transformation framework.
 - Easily configurable via YAML files.
 - Supports multiple transformations, alphabetically ordered here (more to come!):
-  - [Find CreateColumn](https://github.com/davideganna/DataMorphers/search?q=class+CreateColumn&type=code)
-  - [CastColumnTypes](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L19)
-  - [ColumnsOperator](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L30)
-  - [DropDuplicates](https://github.com/davideganna/DataMorphers/blob/f2f0d986ce6753e9069bb95cc357b8ff3fd2aea6/datamorphers/datamorphers.py#L78C7-L78C21)
-  - [DeleteDataFrame](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L58)
-  - [DropNA](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L76)
-  - [FillNA](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L87)
-  - [FilterRows](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L99)
-  - [FlatMultiIndex](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L122)
-  - [MergeDataFrames](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L164)
-  - [NormalizeColumn](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L185)
-  - [RemoveColumns](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L199)
-  - [RenameColumns](https://github.com/davideganna/DataMorphers/blob/ab196d96d4756c3729f829975275714aba612812/datamorphers/datamorphers.py#L226)
-  - [Rolling](https://github.com/davideganna/DataMorphers/blob/f2f0d986ce6753e9069bb95cc357b8ff3fd2aea6/datamorphers/datamorphers.py#L249)
-  - [SaveDataFrame](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L224)
-  - [SelectColumns](https://github.com/davideganna/DataMorphers/blob/4a8ee2e513793224876f721f22fdb1a08097ce05/datamorphers/datamorphers.py#L240)
+  - [CreateColumn](https://github.com/davideganna/DataMorphers/search?q=class+CreateColumn&type=code)
+  - [CastColumnTypes](https://github.com/davideganna/DataMorphers/search?q=class+CastColumnTypes&type=code)
+  - [ColumnsOperator](https://github.com/davideganna/DataMorphers/search?q=class+ColumnsOperator&type=code)
+  - [DropDuplicates](https://github.com/davideganna/DataMorphers/search?q=class+DropDuplicates&type=code)
+  - [DeleteDataFrame](https://github.com/davideganna/DataMorphers/search?q=class+DeleteDataFrame&type=code)
+  - [DropNA](https://github.com/davideganna/DataMorphers/search?q=class+DropNA&type=code)
+  - [FillNA](https://github.com/davideganna/DataMorphers/search?q=class+FillNA&type=code)
+  - [FilterRows](https://github.com/davideganna/DataMorphers/search?q=class+FilterRows&type=code)
+  - [FlatMultiIndex](https://github.com/davideganna/DataMorphers/search?q=class+FlatMultiIndex&type=code)
+  - [MergeDataFrames](https://github.com/davideganna/DataMorphers/search?q=class+MergeDataFrames&type=code)
+  - [NormalizeColumn](https://github.com/davideganna/DataMorphers/search?q=class+NormalizeColumn&type=code)
+  - [RemoveColumns](https://github.com/davideganna/DataMorphers/search?q=class+RemoveColumns&type=code)
+  - [RenameColumns](https://github.com/davideganna/DataMorphers/search?q=class+RenameColumns&type=code)
+  - [Rolling](https://github.com/davideganna/DataMorphers/search?q=class+Rolling&type=code)
+  - [SaveDataFrame](https://github.com/davideganna/DataMorphers/search?q=class+SaveDataFrame&type=code)
+  - [SelectColumns](https://github.com/davideganna/DataMorphers/search?q=class+SelectColumns&type=code)
+
 - Supports custom transformations, defined by the user.
 
 ## Installation
