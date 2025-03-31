@@ -244,7 +244,7 @@ If a custom module is provided, your custom transformations will be used instead
 
 ## Storing and retrieving objects through `DataMorphersStorage`
 
-DataMorphers provides a Singleton-Based, In-Memory Key-Value Storage, called `DataMorphersStorage`.
+DataMorphers provides a Singleton-Based storage system, called `DataMorphersStorage`.
 
 This is a singleton-based, in-memory key-value storage designed for shared access across multiple modules in a Python application. It ensures that only one instance of the storage exists, maintaining a persistent cache across imports.
 
