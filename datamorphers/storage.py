@@ -1,4 +1,4 @@
-from typing import Any, Self
+from typing import Any
 
 from datamorphers import logger
 
