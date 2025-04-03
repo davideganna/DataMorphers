@@ -138,14 +138,14 @@ class FillNA(DataMorpher):
 
 class FilterRows(DataMorpher):
     def __init__(
-        self, *, first_column: str, second_column: str | float | int, logic: str
+        self, *, first_column: str, second_column: bool | float | int | str, logic: str
     ):
         """
         Filter rows based on a condition.
 
         Parameters:
             first_column (str): Name of the column we want to compare.
-            second_column (str | float | int): If a column name is given,
+            second_column (bool | float | int | str): If a column name is given,
                 comparison will be done against the values present in that column.
                 Otherwise, comparison will be done against the provided value.
             logic (str): Python operator.

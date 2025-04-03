@@ -59,7 +59,7 @@ pipeline_FillNA:
 pipeline_FilterRows_e:
   - FilterRows:
       first_column: A
-      second_column: B
+      second_column: true
       logic: eq
 
 pipeline_FilterRows_gt:

@@ -211,7 +211,7 @@ def test_filter_rows():
         """
         - FilterRows:
             first_column: A
-            second_column: B
+            second_column: true
             logic: eq
         """
         config = get_pipeline_config(
@@ -221,7 +221,7 @@ def test_filter_rows():
         df = generate_mock_df()
         df: pd.DataFrame = run_pipeline(df, config=config)
 
-        res = df.loc[df["A"] == df["B"]]
+        res = df.loc[df["A"] == True]
 
         assert df.equals(res)
 
