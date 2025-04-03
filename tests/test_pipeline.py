@@ -22,10 +22,6 @@ def generate_mock_df():
 
 def test_pipeline():
     """
-    - CreateColumn:
-        column_name: food_marker
-        value: food
-
     - FilterRows:
         first_column: item_type
         second_column: food_marker
@@ -50,7 +46,6 @@ def test_pipeline():
     - RemoveColumns:
         columns_name:
             - discount_amount
-            - food_marker
     """
     config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name="pipeline_food")
 

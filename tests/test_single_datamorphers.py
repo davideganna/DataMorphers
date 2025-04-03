@@ -52,7 +52,7 @@ def test_create_dynamic_column():
         **kwargs,
     )
 
-    df = run_pipeline(df, config=config)
+    df: pd.DataFrame = run_pipeline(df, config=config)
 
     assert "D" in df.columns
     assert df["D"].unique()[0] == 888
@@ -112,7 +112,7 @@ def test_columns_operator():
     )
 
     df = generate_mock_df()
-    df = run_pipeline(df, config=config)
+    df: pd.DataFrame = run_pipeline(df, config=config)
 
     res_sum = df["A"] + df["B"]
     res_sub = df["A"] - df["B"]
@@ -186,7 +186,7 @@ def test_dropna():
     config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name="pipeline_DropNA")
 
     df = generate_mock_df()
-    df = run_pipeline(df, config=config)
+    df: pd.DataFrame = run_pipeline(df, config=config)
 
     assert np.nan not in df["B"]
 
@@ -200,7 +200,7 @@ def test_fillna():
     config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name="pipeline_FillNA")
 
     df = generate_mock_df()
-    df = run_pipeline(df, config=config)
+    df: pd.DataFrame = run_pipeline(df, config=config)
 
     assert np.nan not in df["B"]
     assert 0 in df["B"]
@@ -219,27 +219,27 @@ def test_filter_rows():
         )
 
         df = generate_mock_df()
-        df = run_pipeline(df, config=config)
+        df: pd.DataFrame = run_pipeline(df, config=config)
 
         res = df.loc[df["A"] == df["B"]]
 
         assert df.equals(res)
 
-    def _test_filter_rows_g():
+    def _test_filter_rows_gt():
         """
         - FilterRows:
             first_column: A
-            second_column: B
+            second_column: 3.14
             logic: g
         """
         config = get_pipeline_config(
-            yaml_path=YAML_PATH, pipeline_name="pipeline_FilterRows_g"
+            yaml_path=YAML_PATH, pipeline_name="pipeline_FilterRows_gt"
         )
 
         df = generate_mock_df()
-        df = run_pipeline(df, config=config)
+        df: pd.DataFrame = run_pipeline(df, config=config)
 
-        res = df.loc[df["A"] > df["B"]]
+        res = df.loc[df["A"] > 3.14]
 
         assert df.equals(res)
 
@@ -255,12 +255,12 @@ def test_filter_rows():
         )
 
         df = generate_mock_df()
-        df = run_pipeline(df, config=config)
+        df: pd.DataFrame = run_pipeline(df, config=config)
 
         res = df.loc[df["A"] >= df["B"]]
         assert df.equals(res)
 
-    def _test_filter_rows_l():
+    def _test_filter_rows_lt():
         """
         - FilterRows:
             first_column: A
@@ -268,11 +268,11 @@ def test_filter_rows():
             logic: l
         """
         config = get_pipeline_config(
-            yaml_path=YAML_PATH, pipeline_name="pipeline_FilterRows_l"
+            yaml_path=YAML_PATH, pipeline_name="pipeline_FilterRows_lt"
         )
 
         df = generate_mock_df()
-        df = run_pipeline(df, config=config)
+        df: pd.DataFrame = run_pipeline(df, config=config)
 
         res = df.loc[df["A"] < df["B"]]
 
@@ -290,16 +290,16 @@ def test_filter_rows():
         )
 
         df = generate_mock_df()
-        df = run_pipeline(df, config=config)
+        df: pd.DataFrame = run_pipeline(df, config=config)
 
         res = df.loc[df["A"] <= df["B"]]
 
         assert df.equals(res)
 
     _test_filter_rows_e()
-    _test_filter_rows_g()
+    _test_filter_rows_gt()
     _test_filter_rows_ge()
-    _test_filter_rows_l()
+    _test_filter_rows_lt()
     _test_filter_rows_le()
 
 
@@ -318,7 +318,7 @@ def test_flat_multi_index():
             "E": [7, 8, 9],
         }
     )
-    df = run_pipeline(df, config=config)
+    df: pd.DataFrame = run_pipeline(df, config=config)
 
     assert df.columns.equals(pd.Index(["A_B", "C_D", "E"]))
 
@@ -339,7 +339,7 @@ def test_merge_dataframes():
         yaml_path=YAML_PATH, pipeline_name="pipeline_MergeDataFrames", **kwargs
     )
 
-    df = run_pipeline(df, config=config)
+    df: pd.DataFrame = run_pipeline(df, config=config)
 
     assert "C" in df.columns
     assert "C1" in df.columns
@@ -356,7 +356,7 @@ def test_normalize_column():
     )
 
     df = generate_mock_df()
-    df = run_pipeline(df, config=config)
+    df: pd.DataFrame = run_pipeline(df, config=config)
 
     assert "A_norm" in df.columns
     assert ((df["A"] - df["A"].mean()) / df["A"].std()).equals(df["A_norm"])
@@ -377,7 +377,7 @@ def test_remove_columns():
     )
 
     df = generate_mock_df()
-    df = run_pipeline(df, config=config)
+    df: pd.DataFrame = run_pipeline(df, config=config)
 
     assert "A" not in df.columns
     assert "B" not in df.columns
@@ -396,7 +396,7 @@ def test_rename_columns():
     )
 
     df = generate_mock_df()
-    df = run_pipeline(df, config=config)
+    df: pd.DataFrame = run_pipeline(df, config=config)
 
     assert "A" not in df.columns
     assert "B" not in df.columns
@@ -433,7 +433,7 @@ def test_rolling():
     config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name="pipeline_Rolling")
 
     df = generate_mock_df()
-    df = run_pipeline(df, config=config)
+    df: pd.DataFrame = run_pipeline(df, config=config)
 
     rolling_mean = df["A"].rolling(2).mean()
     rolling_std = df["A"].rolling(2).std()
@@ -458,7 +458,7 @@ def test_save_dataframe():
     )
 
     df = generate_mock_df()
-    df = run_pipeline(df, config=config)
+    df: pd.DataFrame = run_pipeline(df, config=config)
 
     assert os.path.isfile("saved_df.pkl")
 
@@ -473,7 +473,7 @@ def test_select_columns():
     )
 
     df = generate_mock_df()
-    df = run_pipeline(df, config=config)
+    df: pd.DataFrame = run_pipeline(df, config=config)
 
     assert "A" in df.columns
     assert "B" in df.columns
@@ -493,6 +493,6 @@ def test_delete_dataframe():
     )
 
     df = generate_mock_df()
-    df = run_pipeline(df, config=config)
+    df: pd.DataFrame = run_pipeline(df, config=config)
 
     assert "saved_df.pkl" not in os.listdir()
