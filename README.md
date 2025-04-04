@@ -37,7 +37,7 @@ By leveraging DataMorphers, your pipelines become cleaner, more scalable and eas
   - [SaveDataFrame](https://github.com/davideganna/DataMorphers/search?q=class+SaveDataFrame&type=code)
   - [SelectColumns](https://github.com/davideganna/DataMorphers/search?q=class+SelectColumns&type=code)
   - [ToLower](https://github.com/davideganna/DataMorphers/search?q=class+ToLower&type=code)
-  - [ToLower](https://github.com/davideganna/DataMorphers/search?q=class+ToUpper&type=code)
+  - [ToUpper](https://github.com/davideganna/DataMorphers/search?q=class+ToUpper&type=code)
 
 - Supports custom transformations, defined by the user.
 - Supports storing and retrieving objects throughout the entire application lifecycle, by leveraging [DataMorphersStorage](https://github.com/davideganna/DataMorphers/search?q=class+DataMorphersStorage&type=code)
@@ -119,10 +119,6 @@ transformed_df = run_pipeline(df, config)
 A log visually shows your data pipeline:
 
 ```plaintext
-- INFO - Loading pipeline named: pipeline_food
-- INFO - *** DataMorpher: CreateColumn ***
-- INFO -     column_name: food_marker
-- INFO -     value: food
 - INFO - *** DataMorpher: FilterRows ***
 - INFO -     first_column: item_type
 - INFO -     second_column: food_marker
@@ -141,7 +137,7 @@ A log visually shows your data pipeline:
 - INFO -     logic: sub
 - INFO -     output_column: discounted_price
 - INFO - *** DataMorpher: RemoveColumns ***
-- INFO -     columns_name: ['discount_amount', 'food_marker']
+- INFO -     columns_name: ['discount_amount']
 ```
 
 The resulting DataFrame follows:
