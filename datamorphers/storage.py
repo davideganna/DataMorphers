@@ -1,4 +1,4 @@
-from typing import Any, Self
+from typing import Any
 
 from datamorphers import logger
 
@@ -7,11 +7,12 @@ __all__ = ["dms"]
 
 class DataMorphersStorage:
     """
-    DataMorphersStorage - A Singleton-Based In-Memory Key-Value Storage.
+    A Singleton-based, in-memory Storage.
 
-    This class provides a simple, thread-safe, in-memory key-value store designed
-    to persist data across multiple module imports. It ensures that only a single
-    instance of `DataMorphersStorage` exists throughout the application.
+    This class provides an in-memory key-value store designed
+    to persist data across multiple module imports.
+    It ensures that only a single instance of `DataMorphersStorage`
+    exists throughout the application.
 
     Attributes:
         logger_msg (str): A prefix message used in log outputs.

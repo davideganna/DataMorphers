@@ -70,15 +70,10 @@ To do so, we create a YAML file specifying a pipeline of transformations, named 
 
 ```yaml
 pipeline_food:
-  # Create a column named "food_marker", containing a fixed value named "food".
-  - CreateColumn:
-      column_name: food_marker
-      value: food
-
-  # Compare the columns "item_type" and "food_marker", and keep rows that are equal (logic: "eq").
+  # Compare the column "item_type" with the value "food", and keep rows that are equal (logic: "eq").
   - FilterRows:
       first_column: item_type
-      second_column: food_marker
+      second_column: food
       logic: eq
 
   # Some values in the column "discount_pct" are NaN. Fill them with 0.
@@ -104,7 +99,6 @@ pipeline_food:
   - RemoveColumns:
       columns_name:
         - discount_amount
-        - food_marker
 ```
 
 ### 3. Apply the transformations as defined in the config

@@ -137,8 +137,19 @@ class FillNA(DataMorpher):
 
 
 class FilterRows(DataMorpher):
-    def __init__(self, *, first_column: str, second_column: str, logic: str):
-        """Logic is python standard operator"""
+    def __init__(
+        self, *, first_column: str, second_column: bool | float | int | str, logic: str
+    ):
+        """
+        Filter rows based on a condition.
+
+        Parameters:
+            first_column (str): Name of the column we want to compare.
+            second_column (bool | float | int | str): If a column name is given,
+                comparison will be done against the values present in that column.
+                Otherwise, comparison will be done against the provided value.
+            logic (str): Python operator.
+        """
         super().__init__()
         self.first_column = first_column
         self.second_column = second_column
@@ -146,9 +157,13 @@ class FilterRows(DataMorpher):
 
     @nw.narwhalify
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
-        """Filters rows based on a condition in the specified column."""
+        """Filters rows based on a condition."""
         operation = getattr(operator, self.logic)
-        expr: nw.Expr = operation(nw.col(self.first_column), nw.col(self.second_column))
+        if self.second_column not in df.columns:
+            col_to_compare = nw.lit(self.second_column)
+        else:
+            col_to_compare = nw.col(self.second_column)
+        expr: nw.Expr = operation(nw.col(self.first_column), col_to_compare)
         df = df.filter(expr)
         return df
 

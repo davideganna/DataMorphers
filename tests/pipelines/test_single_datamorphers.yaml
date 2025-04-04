@@ -59,13 +59,13 @@ pipeline_FillNA:
 pipeline_FilterRows_e:
   - FilterRows:
       first_column: A
-      second_column: B
+      second_column: true
       logic: eq
 
-pipeline_FilterRows_g:
+pipeline_FilterRows_gt:
   - FilterRows:
       first_column: A
-      second_column: B
+      second_column: 3.14
       logic: gt
 
 pipeline_FilterRows_ge:
@@ -74,7 +74,7 @@ pipeline_FilterRows_ge:
       second_column: B
       logic: ge
 
-pipeline_FilterRows_l:
+pipeline_FilterRows_lt:
   - FilterRows:
       first_column: A
       second_column: B
@@ -85,6 +85,7 @@ pipeline_FilterRows_le:
       first_column: A
       second_column: B
       logic: le
+
 
 pipeline_FlatMultiIndex:
   - FlatMultiIndex
