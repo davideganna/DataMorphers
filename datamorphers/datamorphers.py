@@ -330,8 +330,7 @@ class ToLower(DataMorpher):
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """This function converts the columns values to lowercase."""
 
-        for col in self.columns_name:
-            df = df.with_columns(df[col].str.to_lowercase().alias(col))
+        df = df.with_columns(nw.col(self.columns_name).str.to_lowercase())
 
         return df
 
@@ -348,6 +347,6 @@ class ToUpper(DataMorpher):
         """This function converts the columns values to uppercase."""
 
         for col in self.columns_name:
-            df = df.with_columns(df[col].str.to_uppercase().alias(col))
+            df = df.with_columns(nw.col(self.columns_name).str.to_uppercase())
 
         return df
