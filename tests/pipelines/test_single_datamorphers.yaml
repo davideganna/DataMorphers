@@ -147,8 +147,13 @@ pipeline_SelectColumns:
 pipeline_ToLower:
   - ToLower:
       columns_name:
-        - A
-        - B
+        - D
+        - E
+pipeline_ToUpper:
+  - ToUpper:
+      columns_name:
+        - D
+        - E
 
 pipeline_DeleteDataFrame:
   - DeleteDataFrame:

@@ -26,6 +26,8 @@ def generate_mock_df():
             "A": [1, 2, 2, 2, 3],
             "B": [4, 5, 5, 6, np.nan],
             "C": [7, 8, 8, 8.5, 9],
+            "D": ["WHITE", "black", "OrAnge", "BROWN", "green"],
+            "E": ["red", "Blue", "YelloW", "LIGHT_BLUE", "PInk"],
         }
     )
     return df
@@ -479,20 +481,40 @@ def test_select_columns():
     assert "B" in df.columns
     assert "C" not in df.columns
 
+
 def test_to_lower():
     """
     - ToLower:
-        columns: [A, B]
+        columns: [D, E]
     """
-    config = get_pipeline_config(
-        yaml_path=YAML_PATH, pipeline_name="pipeline_ToLower"
-    )
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name="pipeline_ToLower")
 
     df = generate_mock_df()
     df = run_pipeline(df, config=config)
 
-    assert "A".lower() in df.columns 
-    assert "B".lower() in df.columns 
+    lower_d = df["D"].to_list()
+    lower_e = df["E"].to_list()
+
+    assert lower_d == ["white", "black", "orange", "brown", "green"]
+    assert lower_e == ["red", "blue", "yellow", "light_blue", "pink"]
+
+
+def test_to_upper():
+    """
+    - ToLower:
+        columns: [D, E]
+    """
+    config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name="pipeline_ToUpper")
+
+    df = generate_mock_df()
+    df = run_pipeline(df, config=config)
+
+    lower_d = df["D"].to_list()
+    lower_e = df["E"].to_list()
+
+    assert lower_d == ["WHITE", "BLACK", "ORANGE", "BROWN", "GREEN"]
+    assert lower_e == ["RED", "BLUE", "YELLOW", "LIGHT_BLUE", "PINK"]
+
 
 # Keep it last: deletes a DataFrame saved using 'SaveDataFrame'
 def test_delete_dataframe():

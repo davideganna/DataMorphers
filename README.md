@@ -37,6 +37,7 @@ By leveraging DataMorphers, your pipelines become cleaner, more scalable and eas
   - [SaveDataFrame](https://github.com/davideganna/DataMorphers/search?q=class+SaveDataFrame&type=code)
   - [SelectColumns](https://github.com/davideganna/DataMorphers/search?q=class+SelectColumns&type=code)
   - [ToLower](https://github.com/davideganna/DataMorphers/search?q=class+ToLower&type=code)
+  - [ToLower](https://github.com/davideganna/DataMorphers/search?q=class+ToUpper&type=code)
 
 - Supports custom transformations, defined by the user.
 - Supports storing and retrieving objects throughout the entire application lifecycle, by leveraging [DataMorphersStorage](https://github.com/davideganna/DataMorphers/search?q=class+DataMorphersStorage&type=code)
