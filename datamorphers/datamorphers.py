@@ -320,16 +320,15 @@ class SelectColumns(DataMorpher):
 
 
 class ToLower(DataMorpher):
-    def __init__(self, columns_name: list):
+    def __init__(self, columns_name: list | str):
         super().__init__()
-        self.columns_name = columns_name
+        self.columns_name = (
+            columns_name if type(columns_name) is list else [columns_name]
+        )
 
     @nw.narwhalify
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """This function converts the columns values to lowercase."""
-
-        if len(self.columns_name) == 0:
-            return df
 
         for col in self.columns_name:
             df = df.with_columns(df[col].str.to_lowercase().alias(col))
@@ -338,16 +337,15 @@ class ToLower(DataMorpher):
 
 
 class ToUpper(DataMorpher):
-    def __init__(self, columns_name: list):
+    def __init__(self, columns_name: list | str):
         super().__init__()
-        self.columns_name = columns_name
+        self.columns_name = (
+            columns_name if type(columns_name) is list else [columns_name]
+        )
 
     @nw.narwhalify
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """This function converts the columns values to uppercase."""
-
-        if len(self.columns_name) == 0:
-            return df
 
         for col in self.columns_name:
             df = df.with_columns(df[col].str.to_uppercase().alias(col))
