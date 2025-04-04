@@ -302,3 +302,27 @@ class SelectColumns(DataMorpher):
         """Selects columns from the DataFrame."""
         df = df.select(self.columns_name)
         return df
+
+class ToLower(DataMorpher):
+    def __init__(self, columns_name: list | str):
+        super().__init__()
+        self.columns_name = (
+            columns_name if type(columns_name) is list else [columns_name]
+        )
+
+    def _datamorph(self, df: pd.DataFrame):
+        """This function converts a single column name or a list to lowercase."""
+
+        if len(self.columns_name):
+            return df 
+
+        # Makes a dictionary to avoid looping through the names list
+        names_dict = dict()
+
+        for n in self.columns_name:
+            names_dict[n] = n.lower()
+        
+        
+        df.columns = [names_dict[col] if col in names_dict else col for col in df.columns]
+        
+        return df

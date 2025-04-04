@@ -19,6 +19,7 @@ By leveraging DataMorphers, your pipelines become cleaner, more scalable and eas
 
 - Modular and extensible transformation framework to design data pipelines, easily configurable from YAML files.
 - Supports multiple transformations, alphabetically ordered here (more to come!):
+
   - [CreateColumn](https://github.com/davideganna/DataMorphers/search?q=class+CreateColumn&type=code)
   - [CastColumnTypes](https://github.com/davideganna/DataMorphers/search?q=class+CastColumnTypes&type=code)
   - [ColumnsOperator](https://github.com/davideganna/DataMorphers/search?q=class+ColumnsOperator&type=code)
@@ -35,6 +36,7 @@ By leveraging DataMorphers, your pipelines become cleaner, more scalable and eas
   - [Rolling](https://github.com/davideganna/DataMorphers/search?q=class+Rolling&type=code)
   - [SaveDataFrame](https://github.com/davideganna/DataMorphers/search?q=class+SaveDataFrame&type=code)
   - [SelectColumns](https://github.com/davideganna/DataMorphers/search?q=class+SelectColumns&type=code)
+  - [ToLower](https://github.com/davideganna/DataMorphers/search?q=class+ToLower&type=code)
 
 - Supports custom transformations, defined by the user.
 - Supports storing and retrieving objects throughout the entire application lifecycle, by leveraging [DataMorphersStorage](https://github.com/davideganna/DataMorphers/search?q=class+DataMorphersStorage&type=code)
@@ -51,13 +53,13 @@ pip install datamorphers
 
 ### 1. Define your initial DataFrame
 
-| item   | item_type   |   price |   discount_pct |
-|:-------|:------------|--------:|---------------:|
-| apple  | food        |     3   |           0.1  |
-| TV     | electronics |   100   |           0.05 |
-| banana | food        |     2.5 |         nan    |
-| pasta  | food        |     3   |           0.12 |
-| cake   | food        |    15   |         nan    |
+| item   | item_type   | price | discount_pct |
+| :----- | :---------- | ----: | -----------: |
+| apple  | food        |     3 |          0.1 |
+| TV     | electronics |   100 |         0.05 |
+| banana | food        |   2.5 |          nan |
+| pasta  | food        |     3 |         0.12 |
+| cake   | food        |    15 |          nan |
 
 ### 2. Define Your Transformation Pipeline
 
@@ -118,7 +120,9 @@ config = get_pipeline_config("config.yaml", pipeline_name='pipeline_food'))
 # Run pipeline
 transformed_df = run_pipeline(df, config)
 ```
+
 A log visually shows your data pipeline:
+
 ```plaintext
 - INFO - Loading pipeline named: pipeline_food
 - INFO - *** DataMorpher: CreateColumn ***
@@ -144,13 +148,14 @@ A log visually shows your data pipeline:
 - INFO - *** DataMorpher: RemoveColumns ***
 - INFO -     columns_name: ['discount_amount', 'food_marker']
 ```
+
 The resulting DataFrame follows:
-| item   | item_type   |   price |   discount_pct |   discounted_price |
+| item | item_type | price | discount_pct | discounted_price |
 |:-------|:------------|--------:|---------------:|-------------------:|
-| apple  | food        |     3   |           0.1  |               2.7  |
-| banana | food        |     2.5 |           0    |               2.5  |
-| pasta  | food        |     3   |           0.12 |               2.64 |
-| cake   | food        |    15   |           0    |              15    |
+| apple | food | 3 | 0.1 | 2.7 |
+| banana | food | 2.5 | 0 | 2.5 |
+| pasta | food | 3 | 0.12 | 2.64 |
+| cake | food | 15 | 0 | 15 |
 
 ---
 
@@ -219,7 +224,6 @@ class CalculateCircularArea(DataMorpher):
 To use your custom implementations, create a file named `custom_datamorphers.py` inside your current directory.
 
 The pipeline will first check for the specified DataMorpher in `custom_datamorphers`. If it's not found, it will fall back to the default ones in `datamorphers`. This allows for seamless extension without modifying the base package.
-
 
 ### Running the Pipeline with Custom DataMorphers
 

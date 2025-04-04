@@ -479,6 +479,20 @@ def test_select_columns():
     assert "B" in df.columns
     assert "C" not in df.columns
 
+def test_to_lower():
+    """
+    - ToLower:
+        columns: [A, B]
+    """
+    config = get_pipeline_config(
+        yaml_path=YAML_PATH, pipeline_name="pipeline_ToLower"
+    )
+
+    df = generate_mock_df()
+    df = run_pipeline(df, config=config)
+
+    assert "A".lower() in df.columns 
+    assert "B".lower() in df.columns 
 
 # Keep it last: deletes a DataFrame saved using 'SaveDataFrame'
 def test_delete_dataframe():
