@@ -35,6 +35,7 @@ def get_pipeline_config(yaml_path: str, pipeline_name: str, **kwargs: dict) -> d
         yaml_content = yaml_content.replace(f"${{{k}}}", str(v))
 
     config = yaml.safe_load(yaml_content)
+    print(config)
     config["pipeline_name"] = pipeline_name
 
     validate_pipeline_config(config)
