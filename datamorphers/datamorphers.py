@@ -317,3 +317,36 @@ class SelectColumns(DataMorpher):
         """Selects columns from the DataFrame."""
         df = df.select(self.columns_name)
         return df
+
+
+class ToLower(DataMorpher):
+    def __init__(self, columns_name: list | str):
+        super().__init__()
+        self.columns_name = (
+            columns_name if type(columns_name) is list else [columns_name]
+        )
+
+    @nw.narwhalify
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
+        """This function converts the columns values to lowercase."""
+
+        df = df.with_columns(nw.col(self.columns_name).str.to_lowercase())
+
+        return df
+
+
+class ToUpper(DataMorpher):
+    def __init__(self, columns_name: list | str):
+        super().__init__()
+        self.columns_name = (
+            columns_name if type(columns_name) is list else [columns_name]
+        )
+
+    @nw.narwhalify
+    def _datamorph(self, df: IntoFrame) -> IntoFrame:
+        """This function converts the columns values to uppercase."""
+
+        for col in self.columns_name:
+            df = df.with_columns(nw.col(self.columns_name).str.to_uppercase())
+
+        return df
