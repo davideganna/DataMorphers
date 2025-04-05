@@ -65,24 +65,6 @@ class ColumnsOperator(DataMorpher):
         return df
 
 
-class DeleteDataFrame(DataMorpher):
-    def __init__(self, *, file_name: list | str):
-        super().__init__()
-        self.file_name = file_name if type(file_name) is list else [file_name]
-
-    def _datamorph(self, df: IntoFrame) -> IntoFrame:
-        """
-        Deletes a DataFrame (or a list of DataFrames) previously saved using pickle.
-        """
-        import os.path
-
-        for file in self.file_name:
-            if os.path.isfile(f"{file}.pkl"):
-                os.remove(f"{file}.pkl")
-
-        return df
-
-
 class DropDuplicates(DataMorpher):
     def __init__(self, subset: list | str = None, keep: str = "any"):
         super().__init__()
@@ -284,24 +266,6 @@ class Rolling(DataMorpher):
         elif self.how == "var":
             rolling_col = col.rolling_var(self.window_size)
         df = df.with_columns(rolling_col.alias(self.output_column))
-        return df
-
-
-class SaveDataFrame(DataMorpher):
-    def __init__(self, file_name: str):
-        super().__init__()
-        self.file_name = file_name
-
-    def _datamorph(self, df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Pandas only.
-
-        Saves a DataFrame using pickle.
-
-        If you wish to later remove the pickle file, call 'DeleteDataFrame'
-            at the end of the pipeline.
-        """
-        df.to_pickle(f"{self.file_name}.pkl")
         return df
 
 
