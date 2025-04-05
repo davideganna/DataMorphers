@@ -11,7 +11,7 @@
 
 ## Overview
 
-DataMorphers is a Python library that provides a flexible framework for transforming Pandas and Polars DataFrames using a modular data pipeline approach. Transformations are defined in a YAML configuration, and are applied sequentially to your dataset.
+DataMorphers provides a flexible framework for transforming Pandas and Polars DataFrames using a modular data pipeline approach. Transformations are defined in a YAML configuration, and are applied sequentially to your dataset.
 
 By leveraging DataMorphers, your pipelines become cleaner, more scalable and easier to debug.
 
