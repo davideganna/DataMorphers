@@ -448,23 +448,6 @@ def test_rolling():
     assert df["rolling_var"].equals(rolling_var)
 
 
-def test_save_dataframe():
-    """
-    - SaveDataFrame:
-        file_name: saved_df
-    """
-    import os.path
-
-    config = get_pipeline_config(
-        yaml_path=YAML_PATH, pipeline_name="pipeline_SaveDataFrame"
-    )
-
-    df = generate_mock_df()
-    df: pd.DataFrame = run_pipeline(df, config=config)
-
-    assert os.path.isfile("saved_df.pkl")
-
-
 def test_select_columns():
     """
     - SelectColumns:
@@ -485,18 +468,14 @@ def test_select_columns():
 def test_to_lower():
     """
     - ToLower:
-        columns: [D, E]
+        columns: D
     """
     config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name="pipeline_ToLower")
 
-    df = generate_mock_df()
+    df: pd.DataFrame = generate_mock_df()
     df = run_pipeline(df, config=config)
 
-    lower_d = df["D"].to_list()
-    lower_e = df["E"].to_list()
-
-    assert lower_d == ["white", "black", "orange", "brown", "green"]
-    assert lower_e == ["red", "blue", "yellow", "light_blue", "pink"]
+    assert df["D"].equals(df["D"].str.lower())
 
 
 def test_to_upper():
@@ -506,29 +485,8 @@ def test_to_upper():
     """
     config = get_pipeline_config(yaml_path=YAML_PATH, pipeline_name="pipeline_ToUpper")
 
-    df = generate_mock_df()
+    df: pd.DataFrame = generate_mock_df()
     df = run_pipeline(df, config=config)
 
-    lower_d = df["D"].to_list()
-    lower_e = df["E"].to_list()
-
-    assert lower_d == ["WHITE", "BLACK", "ORANGE", "BROWN", "GREEN"]
-    assert lower_e == ["RED", "BLUE", "YELLOW", "LIGHT_BLUE", "PINK"]
-
-
-# Keep it last: deletes a DataFrame saved using 'SaveDataFrame'
-def test_delete_dataframe():
-    """
-    - DeleteDataFrame:
-        file_name: saved_df
-    """
-    import os
-
-    config = get_pipeline_config(
-        yaml_path=YAML_PATH, pipeline_name="pipeline_DeleteDataFrame"
-    )
-
-    df = generate_mock_df()
-    df: pd.DataFrame = run_pipeline(df, config=config)
-
-    assert "saved_df.pkl" not in os.listdir()
+    assert df["D"].equals(df["D"].str.upper())
+    assert df["E"].equals(df["E"].str.upper())

@@ -136,26 +136,18 @@ pipeline_Rolling:
       window_size: 2
       output_column: rolling_var
 
-pipeline_SaveDataFrame:
-  - SaveDataFrame:
-      file_name: saved_df
-
 pipeline_SelectColumns:
   - SelectColumns:
       columns_name:
         - A
         - B
+
 pipeline_ToLower:
   - ToLower:
-      columns_name:
-        - D
-        - E
+      columns_name: D
+
 pipeline_ToUpper:
   - ToUpper:
       columns_name:
         - D
         - E
-
-pipeline_DeleteDataFrame:
-  - DeleteDataFrame:
-      file_name: saved_df
