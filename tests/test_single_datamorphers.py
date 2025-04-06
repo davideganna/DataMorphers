@@ -232,7 +232,7 @@ def test_filter_rows():
         - FilterRows:
             first_column: A
             second_column: 3.14
-            logic: g
+            logic: gt
         """
         config = get_pipeline_config(
             yaml_path=YAML_PATH, pipeline_name="pipeline_FilterRows_gt"
@@ -267,7 +267,7 @@ def test_filter_rows():
         - FilterRows:
             first_column: A
             second_column: B
-            logic: l
+            logic: lt
         """
         config = get_pipeline_config(
             yaml_path=YAML_PATH, pipeline_name="pipeline_FilterRows_lt"
@@ -344,7 +344,7 @@ def test_merge_dataframes():
     df: pd.DataFrame = run_pipeline(df, config=config)
 
     assert "C" in df.columns
-    assert "C1" in df.columns
+    assert "C_1" in df.columns
 
 
 def test_normalize_column():
