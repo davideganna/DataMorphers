@@ -1,19 +1,39 @@
 import json
 import operator
 from typing import Any, Literal
+from pydantic import BaseModel, Field, ValidationError, model_validator
 
 import narwhals as nw
 import pandas as pd
 from narwhals.typing import IntoFrame
 
-from datamorphers.base import DataMorpher
+from datamorphers.base import DataMorpher, DataMorpherError
 
 
 class CreateColumn(DataMorpher):
+    class PyDanticValidator(BaseModel):
+        column_name: str = Field(
+            ..., min_length=1, description="Name of the new column"
+        )
+        value: Any = Field(..., description="Value to be assigned to the new column")
+
+        @model_validator(mode="before")
+        def check_value_type(cls, values):
+            value = values.get("value")
+            if isinstance(value, str) and len(value) < 1:
+                raise ValueError("Value must be a non-empty string")
+            return values
+
     def __init__(self, *, column_name: str, value: Any):
         super().__init__()
-        self.column_name = column_name
-        self.value = value
+        try:
+            self.config = self.PyDanticValidator(column_name=column_name, value=value)
+            self.column_name = self.config.column_name
+            self.value = self.config.value
+        except ValidationError as e:
+            raise DataMorpherError(
+                f"[{self.__class__.__name__}] Invalid config: {e}"
+            ) from e
 
     @nw.narwhalify
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
