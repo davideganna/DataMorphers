@@ -53,7 +53,7 @@ class CastColumnTypes(DataMorpher):
             for col, type_name in v.items():
                 if type_name not in SUPPORTED_TYPE_MAPPING:
                     raise ValueError(
-                        f"Unsupported type '{type_name}' for column '{col}'"
+                        f"Unsupported type '{type_name}' for column '{col}'. Supported types are: {list(SUPPORTED_TYPE_MAPPING.keys())}."
                     )
             return v
 
@@ -192,7 +192,7 @@ class DropDuplicates(DataMorpher):
 class DropNA(DataMorpher):
     class PyDanticValidator(BaseModel):
         column_name: str = Field(
-            ..., description="Name of the column to check for NaN values."
+            ..., min_length=1, description="Name of the column to check for NaN values."
         )
 
     def __init__(self, *, column_name: str):
@@ -220,6 +220,13 @@ class FillNA(DataMorpher):
         value: Any = Field(
             ..., description="Value to replace NaN values in the specified column."
         )
+
+        @model_validator(mode="before")
+        def check_value_type(cls, values: dict):
+            value = values.get("value")
+            if isinstance(value, str) and len(value) < 1:
+                raise ValueError("Value must be a non-empty string")
+            return values
 
     def __init__(self, *, column_name: str, value: Any):
         super().__init__()
@@ -337,15 +344,22 @@ class FlatMultiIndex(DataMorpher):
 
 class MergeDataFrames(DataMorpher):
     class PyDanticValidator(BaseModel):
-        df_to_join: Dict
+        df_to_join: Any
         join_cols: List[str]
         how: str = Field(..., pattern=r"^(left|right|inner|outer)$")
         suffixes: str
 
+        @model_validator(mode="before")
+        def check_value_type(cls, values: dict):
+            df_to_join = values.get("df_to_join")
+            if not isinstance(df_to_join, nw.DataFrame):
+                raise ValueError("Parameter 'df_to_join' must be a DataFrame.")
+            return values
+
     def __init__(
         self,
         *,
-        df_to_join: dict,
+        df_to_join: nw.DataFrame,
         join_cols: list,
         how: str,
         suffixes: Union[str, tuple[str, str]],
@@ -355,9 +369,10 @@ class MergeDataFrames(DataMorpher):
             self.config = self.PyDanticValidator(
                 df_to_join=df_to_join, join_cols=join_cols, how=how, suffixes=suffixes
             )
+            # Deserialize the DataFrame
             self.df_to_join = nw.from_native(
                 pd.read_json(json.dumps(self.config.df_to_join))
-            )  # Deserialize the DataFrame
+            )
             self.join_cols = self.config.join_cols
             self.how = self.config.how
             self.suffixes = self.config.suffixes
