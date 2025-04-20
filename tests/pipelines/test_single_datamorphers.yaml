@@ -86,7 +86,6 @@ pipeline_FilterRows_le:
       second_column: B
       logic: le
 
-
 pipeline_FlatMultiIndex:
   - FlatMultiIndex
 
@@ -95,7 +94,7 @@ pipeline_MergeDataFrames:
       df_to_join: ${second_df}
       join_cols: [A, B]
       how: inner
-      suffixes: "1"
+      suffixes: "_1"
 
 pipeline_NormalizeColumn:
   - NormalizeColumn:

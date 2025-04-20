@@ -119,7 +119,7 @@ A log visually shows your data pipeline:
 ```plaintext
 - INFO - *** DataMorpher: FilterRows ***
 - INFO -     first_column: item_type
-- INFO -     second_column: food_marker
+- INFO -     second_column: food
 - INFO -     logic: e
 - INFO - *** DataMorpher: FillNA ***
 - INFO -     column_name: discount_pct
