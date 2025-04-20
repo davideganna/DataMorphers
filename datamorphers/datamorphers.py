@@ -8,6 +8,7 @@ import pandas as pd
 from narwhals.typing import IntoFrame
 
 from datamorphers.base import DataMorpher, DataMorpherError
+from datamorphers.storage import dms
 
 from datamorphers.constants.constants import SUPPORTED_TYPE_MAPPING
 
@@ -343,36 +344,42 @@ class FlatMultiIndex(DataMorpher):
 
 
 class MergeDataFrames(DataMorpher):
+    """
+    Pandas only.
+
+    Merges two DataFrames based on specified columns and join type.
+    """
+
     class PyDanticValidator(BaseModel):
-        df_to_join: Any
+        df_to_join: str
         join_cols: List[str]
         how: str = Field(..., pattern=r"^(left|right|inner|outer)$")
-        suffixes: str
+        suffixes: tuple[str, str]
 
         @model_validator(mode="before")
         def check_value_type(cls, values: dict):
-            df_to_join = values.get("df_to_join")
-            if not isinstance(df_to_join, nw.DataFrame):
-                raise ValueError("Parameter 'df_to_join' must be a DataFrame.")
+            df_to_join = dms.get(values.get("df_to_join"))
+            if not isinstance(df_to_join, pd.DataFrame):
+                raise ValueError(
+                    "Parameter 'df_to_join' must be a DataFrame."
+                    f"Found type: {type(df_to_join)}."
+                )
             return values
 
     def __init__(
         self,
         *,
-        df_to_join: nw.DataFrame,
+        df_to_join: str,
         join_cols: list,
         how: str,
-        suffixes: Union[str, tuple[str, str]],
+        suffixes: tuple[str, str],
     ):
         super().__init__()
         try:
             self.config = self.PyDanticValidator(
                 df_to_join=df_to_join, join_cols=join_cols, how=how, suffixes=suffixes
             )
-            # Deserialize the DataFrame
-            self.df_to_join = nw.from_native(
-                pd.read_json(json.dumps(self.config.df_to_join))
-            )
+            self.df_to_join = dms.get(df_to_join)
             self.join_cols = self.config.join_cols
             self.how = self.config.how
             self.suffixes = self.config.suffixes
@@ -381,11 +388,14 @@ class MergeDataFrames(DataMorpher):
                 f"[{self.__class__.__name__}] Invalid config: {e}"
             ) from e
 
-    @nw.narwhalify
     def _datamorph(self, df: IntoFrame) -> IntoFrame:
         """Merges two DataFrames."""
-        merged_df = df.join(
-            self.df_to_join, on=self.join_cols, how=self.how, suffix=self.suffixes
+        merged_df = pd.merge(
+            left=df,
+            right=self.df_to_join,
+            on=self.join_cols,
+            how=self.how,
+            suffixes=self.suffixes,
         )
         return merged_df
 

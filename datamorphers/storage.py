@@ -70,7 +70,7 @@ class DataMorphersStorage:
         if key not in self.cache:
             available_keys = self.list_keys()
             raise KeyError(
-                f"{self.logger_msg} Key '{key}' not found. "
+                f"{self.logger_msg} Key '{key}' not found in DataMorphersStorage. "
                 f"Available keys are: {available_keys}"
             )
         return self.cache[key]

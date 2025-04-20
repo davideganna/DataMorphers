@@ -21,6 +21,7 @@ from datamorphers.datamorphers import (
 from datamorphers.base import DataMorpherError
 import pandas as pd
 import narwhals as nw
+from datamorphers.storage import dms
 
 
 # Test CreateColumn
@@ -132,20 +133,20 @@ def test_flat_multi_index_valid():
 # Test MergeDataFrames
 def test_merge_data_frames_valid():
     df = pd.DataFrame({"col1": [1, 2], "col2": [3, 4]})
-    df = nw.from_native(df)
+    dms.set("df", df)
     morpher = MergeDataFrames(
-        df_to_join=df, join_cols=["col1"], how="inner", suffixes="_1"
+        df_to_join="df", join_cols=["col1"], how="inner", suffixes=["_1", "_2"]
     )
     assert morpher.how == "inner"
-    assert morpher.suffixes == "_1"
+    assert morpher.suffixes == ("_1", "_2")
 
 
 def test_merge_data_frames_invalid_how():
     df = pd.DataFrame({"col1": [1, 2], "col2": [3, 4]})
-    df = nw.from_native(df)
+    dms.set("df", df)
     with pytest.raises(DataMorpherError):
         MergeDataFrames(
-            df_to_join=df,
+            df_to_join="df",
             join_cols=["col1"],
             how="invalid",
             suffixes=("_left", "_right"),
