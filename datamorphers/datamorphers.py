@@ -20,7 +20,7 @@ class CreateColumn(DataMorpher):
         value: Any = Field(..., description="Value to be assigned to the new column")
 
         @model_validator(mode="before")
-        def check_value_type(cls, values):
+        def check_value_type(cls, values: dict):
             value = values.get("value")
             if isinstance(value, str) and len(value) < 1:
                 raise ValueError("Value must be a non-empty string")
