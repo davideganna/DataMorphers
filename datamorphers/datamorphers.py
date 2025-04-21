@@ -261,7 +261,7 @@ class FilterRows(DataMorpher):
         second_column (bool | float | int | str): If a column name is given,
             comparison will be done against the values present in that column.
             Otherwise, comparison will be done against the provided value.
-        logic (str): Python operator.
+        logic (str): Python operator (e.g., 'eq', 'lt', etc.).
     """
 
     class PyDanticValidator(BaseModel):
