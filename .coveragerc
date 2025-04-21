@@ -6,7 +6,7 @@ source =
 [report]
 exclude_lines =
     # Don't include validator classes
-    class .PyDanticValidator\(
+    class .*PyDanticValidator\(
     # Ignore standard boilerplate
     def __repr__
     if __name__ == .__main__.:
