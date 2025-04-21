@@ -2,8 +2,13 @@ from abc import ABC, abstractmethod
 
 from narwhals.typing import FrameT
 
+from pydantic import BaseModel
+
 
 class DataMorpher(ABC):
+    class PyDanticValidator(BaseModel):  # pragma: no cover
+        """Pydantic validator for DataMorpher classes."""
+
     def __init__(self):
         pass
 
