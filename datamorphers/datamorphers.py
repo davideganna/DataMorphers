@@ -331,6 +331,9 @@ class FlatMultiIndex(DataMorpher):
             Index(['A_B', 'C_D', 'E']
     """
 
+    class PyDanticValidator(BaseModel):
+        pass
+
     def __init__(self):
         super().__init__()
 
@@ -348,10 +351,40 @@ class MergeDataFrames(DataMorpher):
     Pandas only.
 
     Merges two DataFrames based on specified columns and join type.
+
+    Attributes:
+        df_to_join (pd.DataFrame): The DataFrame to join with, fetched from the DataMorphersStorage.
+        join_cols (List[str]): Columns to join on.
+        how (str): Type of join - must be one of "left", "right", "inner", or "outer".
+        suffixes (Tuple[str, str]): Suffixes to use for overlapping column names.
+
+    Example yaml config:
+        ```yaml
+        pipeline_MergeDataFrames:
+            - MergeDataFrames:
+                df_to_join: df_to_join
+                join_cols: [A, B]
+                how: inner
+                suffixes: ["_1", "_2"]
+        ```
+
+    Example usage:
+        ```python
+        df = generate_mock_df()
+        df_to_join = generate_mock_df()
+        dms.set("df_to_join", df_to_join)
+
+        config = get_pipeline_config(
+            yaml_path=YAML_PATH,
+            pipeline_name="pipeline_MergeDataFrames",
+        )
+
+        df: pd.DataFrame = run_pipeline(df, config=config)
+        ```
     """
 
     class PyDanticValidator(BaseModel):
-        df_to_join: str
+        df_to_join: str = Field(..., min_length=1)
         join_cols: List[str]
         how: str = Field(..., pattern=r"^(left|right|inner|outer)$")
         suffixes: tuple[str, str]
