@@ -331,11 +331,14 @@ def test_merge_dataframes():
         df_to_join: ${second_df}
         join_cols: ['A', 'B']
         how: inner
-        suffix: '1'
+        suffixes: ["_1", "_2"]
     """
+    from datamorphers.storage import dms
+
     df = generate_mock_df()
-    second_df = generate_mock_df()
-    kwargs = {"second_df": second_df}
+    df_to_join = generate_mock_df()
+    dms.set("df_to_join", df_to_join)
+    kwargs = {"df_to_join": "df_to_join"}
 
     config = get_pipeline_config(
         yaml_path=YAML_PATH, pipeline_name="pipeline_MergeDataFrames", **kwargs
@@ -343,8 +346,8 @@ def test_merge_dataframes():
 
     df: pd.DataFrame = run_pipeline(df, config=config)
 
-    assert "C" in df.columns
     assert "C_1" in df.columns
+    assert "C_2" in df.columns
 
 
 def test_normalize_column():

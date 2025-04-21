@@ -1,0 +1,20 @@
+[run]
+branch = True
+source =
+    datamorphers
+
+[report]
+exclude_lines =
+    # Don't include validator classes
+    class .PyDanticValidator\(
+    # Ignore standard boilerplate
+    def __repr__
+    if __name__ == .__main__.:
+
+[html]
+directory = htmlcov
+title = DataMorphers Coverage Report
+
+[paths]
+source =
+    .  # If you're running coverage from the root of your repo

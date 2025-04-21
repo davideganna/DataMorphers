@@ -91,10 +91,10 @@ pipeline_FlatMultiIndex:
 
 pipeline_MergeDataFrames:
   - MergeDataFrames:
-      df_to_join: ${second_df}
+      df_to_join: ${df_to_join}
       join_cols: [A, B]
       how: inner
-      suffixes: "_1"
+      suffixes: ["_1", "_2"]
 
 pipeline_NormalizeColumn:
   - NormalizeColumn:
