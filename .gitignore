@@ -9,3 +9,5 @@ datamorphers.egg-info/
 saved_df.pkl
 build/
 dist/
+htmlcov/
+.coverage
