@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "datamorphers"
-version = "1.0.7"
+version = "1.0.8"
 description = "Flexible framework for transforming Pandas and Polars DataFrames using a modular data pipeline approach."
 authors = [
     { name = "Davide Ganna", email = "ganna.davide@hotmail.it" }
@@ -24,12 +24,7 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["datamorphers"]
+include-package-data = true
 
-[tool.ruff]
-line-length = 88  # Same default as Black
-target-version = "py310"  # Adjust based on your Python version
-fix = true  # Automatically fix issues when running
-
-[tool.ruff.lint]
-extend-select = ["E", "F", "W", "I"]  # Enable common rules
+[tool.setuptools.packages.find]
+where = ["."]
