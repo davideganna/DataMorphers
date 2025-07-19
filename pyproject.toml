@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "datamorphers"
-version = "1.0.8"
+version = "1.0.9"
 description = "Flexible framework for transforming Pandas and Polars DataFrames using a modular data pipeline approach."
 authors = [
     { name = "Davide Ganna", email = "ganna.davide@hotmail.it" }
@@ -28,3 +28,6 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
+
+[tool.setuptools.package-data]
+"datamorphers.constants" = ["*.py", "*.yaml"]
